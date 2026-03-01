@@ -1,4 +1,4 @@
-export type MemberCategory = 'INTI' | 'ANGGOTA';
+export type MemberCategory = 'INTI' | 'ANGGOTA' | 'TERBATAS';
 
 export interface Member {
   id: string;

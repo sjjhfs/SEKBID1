@@ -22,6 +22,7 @@ import {
 import { ShieldAlert, Trash2, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMembers } from "@/hooks/useMembers";
+import { MemberCategory } from "@/types/member";
 
 interface AdminPanelProps {
   onReset: () => Promise<void>;
@@ -34,7 +35,7 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newType, setNewType] = useState<"INTI" | "ANGGOTA">("ANGGOTA");
+  const [newType, setNewType] = useState<MemberCategory>("ANGGOTA");
   
   const { addMember } = useMembers();
   const { toast } = useToast();
@@ -94,7 +95,6 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
 
   return (
     <div className="flex gap-2">
-      {/* Add Member */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
@@ -115,6 +115,7 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
               <SelectContent>
                 <SelectItem value="INTI">INTI</SelectItem>
                 <SelectItem value="ANGGOTA">ANGGOTA</SelectItem>
+                <SelectItem value="TERBATAS">TERBATAS</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -124,7 +125,6 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
         </DialogContent>
       </Dialog>
 
-      {/* Reset Data */}
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="destructive" size="sm">

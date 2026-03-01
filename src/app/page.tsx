@@ -6,7 +6,7 @@ import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus, Sparkles, Loader2 } from "lucide-react";
+import { UserPlus, Sparkles, Loader2, UsersRound } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 
 export default function Home() {
@@ -15,7 +15,6 @@ export default function Home() {
   const { members, loading, selectMember, resetAllData } = useMembers();
   const [isAdminMode, setIsAdminMode] = useState(false);
 
-  // Automatically sign in anonymously if not already signed in
   useEffect(() => {
     if (!isUserLoading && !user && auth) {
       initiateAnonymousSignIn(auth);
@@ -30,10 +29,14 @@ export default function Home() {
     .filter(m => m.type === 'ANGGOTA')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
+  const terbatasMembers = members
+    .filter(m => m.type === 'TERBATAS')
+    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
+  const minTerbatas = terbatasMembers.length > 0 ? Math.min(...terbatasMembers.map(m => m.selectionFrequency)) : 0;
 
-  // Show a simpler loading state while checking authentication
   if (isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -44,7 +47,7 @@ export default function Home() {
 
   if (loading && members.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
+      <div className="max-w-3xl mx-auto px-4 py-12 space-y-8">
         <div className="space-y-4">
           <Skeleton className="h-12 w-48" />
           <Skeleton className="h-6 w-72" />
@@ -67,7 +70,6 @@ export default function Home() {
   return (
     <div className="min-h-screen pb-20 pt-10 px-4">
       <main className="max-w-3xl mx-auto">
-        {/* Header */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -85,7 +87,6 @@ export default function Home() {
           />
         </header>
 
-        {/* Statistics Section */}
         <StatsDashboard members={members} />
 
         {/* INTI Section */}
@@ -113,7 +114,7 @@ export default function Home() {
         </section>
 
         {/* ANGGOTA Section */}
-        <section>
+        <section className="mb-12">
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
             <h2 className="text-2xl font-bold text-accent flex items-center gap-2">
               <UserPlus className="w-6 h-6" />
@@ -136,7 +137,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer */}
+        {/* TERBATAS Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+            <h2 className="text-2xl font-bold text-priority flex items-center gap-2">
+              <UsersRound className="w-6 h-6" />
+              TERBATAS MEMBERS
+            </h2>
+            <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">
+              {terbatasMembers.length}
+            </span>
+          </div>
+          <div className="grid gap-3">
+            {terbatasMembers.map((member) => (
+              <MemberCard
+                key={member.id}
+                member={member}
+                isLowest={member.selectionFrequency === minTerbatas}
+                onSelect={selectMember}
+                isAdminMode={isAdminMode}
+              />
+            ))}
+          </div>
+        </section>
+
         <footer className="mt-16 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
         </footer>

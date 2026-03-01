@@ -2,7 +2,7 @@
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc } from '@/firebase';
 import { collection, doc, writeBatch, increment, serverTimestamp } from 'firebase/firestore';
-import { Member } from '@/types/member';
+import { Member, MemberCategory } from '@/types/member';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
 import { useEffect } from 'react';
@@ -25,13 +25,10 @@ export function useMembers() {
   const { data: members, isLoading: loading } = useCollection<Omit<Member, 'id'>>(membersQuery);
   const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
 
-  // Initialize data if empty (Seed logic)
   useEffect(() => {
-    // CRITICAL: members is null initially. We must wait until it's an empty array [] to seed.
     if (!loading && members !== null && members.length === 0 && firestore) {
       const batch = writeBatch(firestore);
       
-      // Seed Members
       INITIAL_MEMBERS.forEach((m) => {
         const docRef = doc(collection(firestore, 'members'), m.id);
         batch.set(docRef, {
@@ -42,7 +39,6 @@ export function useMembers() {
         });
       });
 
-      // Seed Global Stats if missing
       const sRef = doc(firestore, 'app_statistics', 'globalStats');
       batch.set(sRef, {
         totalSelectionsMade: 0,
@@ -63,19 +59,17 @@ export function useMembers() {
     const memberRef = doc(firestore, 'members', id);
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
 
-    // Increment member count
     updateDocumentNonBlocking(memberRef, {
       selectionFrequency: increment(1),
       lastSelectedAt: serverTimestamp()
     });
 
-    // Increment global total
     updateDocumentNonBlocking(sRef, {
       totalSelectionsMade: increment(1)
     });
   };
 
-  const addMember = async (name: string, type: 'INTI' | 'ANGGOTA') => {
+  const addMember = async (name: string, type: MemberCategory) => {
     if (!firestore) return;
     const newMemberRef = doc(collection(firestore, 'members'));
     setDocumentNonBlocking(newMemberRef, {
@@ -105,13 +99,11 @@ export function useMembers() {
     if (!firestore || !members) return;
     const batch = writeBatch(firestore);
     
-    // Reset individual frequencies
     members.forEach((m) => {
       const docRef = doc(firestore, 'members', m.id);
       batch.update(docRef, { selectionFrequency: 0, lastSelectedAt: null });
     });
 
-    // Reset global stats
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
     batch.update(sRef, { totalSelectionsMade: 0, membersSelectedAtLeastOnceCount: 0 });
     
