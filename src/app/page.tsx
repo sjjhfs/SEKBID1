@@ -51,7 +51,7 @@ export default function Home() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
-              <h1 className="text-4xl font-extrabold tracking-tight">FairGreeter</h1>
+              <h1 className="text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
             </div>
             <p className="text-muted-foreground text-lg">
               Ensuring equitable selection for every occasion.
@@ -111,7 +111,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="mt-16 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} FairGreeter • Powered by Firebase Realtime DB</p>
+          <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Realtime DB</p>
         </footer>
       </main>
     </div>

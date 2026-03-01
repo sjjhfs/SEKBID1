@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'FairGreeter',
+  title: 'DOOR GREETER, SEKBID 1!',
   description: 'Equitable member selection for community greeting duties.',
 };
 
