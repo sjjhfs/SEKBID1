@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc } from '@/firebase';
-import { collection, doc, writeBatch, increment, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, writeBatch, increment, serverTimestamp } from 'firebase/firestore';
 import { Member } from '@/types/member';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
@@ -23,11 +23,12 @@ export function useMembers() {
   }, [firestore]);
 
   const { data: members, isLoading: loading } = useCollection<Omit<Member, 'id'>>(membersQuery);
-  const { data: globalStats } = useDoc(statsRef);
+  const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
 
   // Initialize data if empty (Seed logic)
   useEffect(() => {
-    if (!loading && (!members || members.length === 0) && firestore) {
+    // CRITICAL: members is null initially. We must wait until it's an empty array [] to seed.
+    if (!loading && members !== null && members.length === 0 && firestore) {
       const batch = writeBatch(firestore);
       
       // Seed Members
@@ -41,7 +42,7 @@ export function useMembers() {
         });
       });
 
-      // Seed Global Stats
+      // Seed Global Stats if missing
       const sRef = doc(firestore, 'app_statistics', 'globalStats');
       batch.set(sRef, {
         totalSelectionsMade: 0,
@@ -50,7 +51,7 @@ export function useMembers() {
       
       batch.commit().catch((err) => {
         errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: 'initial_seed',
+          path: 'members',
           operation: 'write',
         }));
       });
@@ -116,7 +117,7 @@ export function useMembers() {
     
     batch.commit().catch((err) => {
       errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: 'members_reset',
+        path: 'members',
         operation: 'update',
       }));
     });
@@ -125,7 +126,7 @@ export function useMembers() {
   return { 
     members: (members || []) as Member[], 
     globalStats,
-    loading, 
+    loading: loading || statsLoading, 
     selectMember, 
     addMember,
     updateMember,
