@@ -263,7 +263,7 @@ const SidebarTrigger = React.forwardRef<
       variant="default"
       size="icon"
       className={cn(
-        "fixed left-0 top-[20%] z-50 h-14 w-10 -translate-y-1/2 rounded-l-none rounded-r-full shadow-lg transition-all duration-300 hover:w-12 border-l-0",
+        "fixed left-0 top-[10%] z-50 h-14 w-10 -translate-y-1/2 rounded-l-none rounded-r-full shadow-lg transition-all duration-300 hover:w-12 border-l-0",
         state === "expanded" ? "left-[var(--sidebar-width)]" : "left-0",
         className
       )}
@@ -694,7 +694,6 @@ const SidebarMenuSubButton = React.forwardRef<
   return (
     <Comp
       ref={ref}
-      data-sidebar="menu-sub-button"
       data-size={size}
       data-active={isActive}
       className={cn(
