@@ -73,7 +73,7 @@ export default function Home() {
                 Sekbid 1 Haleluya!
                 Jika terdapat kebingungan jangan malu untuk bertanya
                 
-                Salam dari Ketua 2025/2026
+                Salam dari Ketua Sekbid 1 2025/2026
               </p>
             </header>
 
