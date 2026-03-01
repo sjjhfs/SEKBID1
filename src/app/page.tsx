@@ -71,8 +71,7 @@ export default function Home() {
               </div>
               <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed max-w-2xl">
                 Sekbid 1 Haleluya!
-                Jika terdapat kebingungan jangan malu untuk bertanya
-                
+                Jika terdapat kebingungan jangan malu untuk bertanya.
                 Salam dari Ketua Sekbid 1 2025/2026
               </p>
             </header>
