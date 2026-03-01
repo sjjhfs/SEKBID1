@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -54,9 +53,9 @@ export default function Home() {
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4 md:px-10 overflow-x-auto">
-          <main className="w-full">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 max-w-5xl mx-auto">
+        <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
+          <main className="w-full max-w-[1700px] mx-auto">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger className="mt-1" />
@@ -80,7 +79,7 @@ export default function Home() {
             </header>
 
             {loading && members.length === 0 ? (
-              <div className="space-y-8 max-w-5xl mx-auto">
+              <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Skeleton className="h-24" />
                   <Skeleton className="h-24" />
@@ -94,11 +93,11 @@ export default function Home() {
               </div>
             ) : (
               <div className="flex flex-col items-center w-full">
-                <div className="w-full max-w-4xl mx-auto">
+                <div className="w-full max-w-4xl mb-8">
                   <StatsDashboard members={members} />
                 </div>
 
-                <div className="flex flex-nowrap gap-8 overflow-x-visible w-fit mx-auto pb-8">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 justify-items-center w-full">
                   {/* INTI Section */}
                   <section className="scroll-mt-20 flex flex-col items-center w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
@@ -186,7 +185,7 @@ export default function Home() {
               </div>
             )}
 
-            <footer className="mt-16 text-center text-sm text-muted-foreground max-w-5xl mx-auto">
+            <footer className="mt-16 text-center text-sm text-muted-foreground">
               <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
             </footer>
           </main>
