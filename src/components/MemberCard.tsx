@@ -55,7 +55,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
 
   return (
     <div className={cn(
-      "member-row-frame group flex items-center justify-between gap-4 w-[500px] flex-shrink-0",
+      "member-row-frame group flex items-center justify-between gap-4 w-full max-w-[500px]",
       isLowest && !isTerbatas && "priority-highlight border-destructive/30",
       isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30"
     )}>
