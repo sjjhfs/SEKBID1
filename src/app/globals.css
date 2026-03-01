@@ -24,7 +24,8 @@
     --input: 240 4% 16%;
     --ring: 274 100% 26%;
     --radius: 0.75rem;
-    --priority: 1 100% 90%;
+    --priority: 0 100% 75%; /* #FF7F7F */
+    --priority-light: 0 100% 90%; /* #FFCCCB */
   }
 }
 
@@ -45,6 +46,17 @@
   @apply bg-destructive/10 border-destructive/50;
 }
 
+.terbatas-priority-highlight {
+  background-color: hsl(var(--priority-light) / 0.2);
+  border-color: hsl(var(--priority-light) / 0.5);
+}
+
 .priority-badge {
   @apply bg-destructive text-destructive-foreground font-bold;
+}
+
+.terbatas-priority-badge {
+  background-color: hsl(var(--priority));
+  color: white;
+  font-weight: bold;
 }

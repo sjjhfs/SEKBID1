@@ -51,15 +51,20 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
     toast({ variant: "destructive", title: "Deleted", description: "Member removed." });
   };
 
+  const isTerbatas = member.type === 'TERBATAS';
+
   return (
     <div className={cn(
       "member-row-frame group flex items-center justify-between gap-4",
-      isLowest && "priority-highlight border-destructive/30"
+      isLowest && !isTerbatas && "priority-highlight border-destructive/30",
+      isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30"
     )}>
       <div className="flex items-center gap-3 min-w-0">
         <div className={cn(
           "shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-          isLowest ? "bg-destructive/20 text-destructive" : "bg-primary/10 text-primary"
+          isLowest 
+            ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
+            : "bg-primary/10 text-primary"
         )}>
           <UserCircle2 className="w-6 h-6" />
         </div>
@@ -67,7 +72,6 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
           <div className="flex items-center gap-2">
             <h4 className="font-semibold text-base truncate">{member.name}</h4>
             
-            {/* Dedicated Rename/Edit Dialog - Only visible in Admin Mode */}
             {isAdminMode && (
               <Dialog open={editOpen} onOpenChange={(open) => {
                 setEditOpen(open);
@@ -122,12 +126,19 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
             <span className="text-xs text-muted-foreground">Frequency:</span>
             <span className={cn(
               "text-xs font-bold px-1.5 py-0.5 rounded",
-              isLowest ? "bg-destructive/20 text-destructive" : "bg-muted text-foreground"
+              isLowest 
+                ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
+                : "bg-muted text-foreground"
             )}>
               {member.selectionFrequency}
             </span>
             {isLowest && (
-              <Badge variant="destructive" className="text-[10px] h-4 uppercase px-1 priority-badge">
+              <Badge 
+                className={cn(
+                  "text-[10px] h-4 uppercase px-1",
+                  isTerbatas ? "terbatas-priority-badge" : "priority-badge"
+                )}
+              >
                 Priority
               </Badge>
             )}
