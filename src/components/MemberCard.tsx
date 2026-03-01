@@ -41,7 +41,7 @@ export function MemberCard({ member, isLowest, onSelect }: MemberCardProps) {
   const handleUpdate = async () => {
     if (!editName.trim()) return;
     await updateMember(member.id, { name: editName });
-    toast({ title: "Updated", description: "Member name updated." });
+    toast({ title: "Name Updated", description: `Changed to ${editName}` });
     setEditOpen(false);
   };
 
@@ -66,28 +66,49 @@ export function MemberCard({ member, isLowest, onSelect }: MemberCardProps) {
           <div className="flex items-center gap-2">
             <h4 className="font-semibold text-base truncate">{member.name}</h4>
             
-            {/* Inline Edit Trigger */}
-            <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            {/* Dedicated Rename/Edit Dialog */}
+            <Dialog open={editOpen} onOpenChange={(open) => {
+              setEditOpen(open);
+              if (open) setEditName(member.name);
+            }}>
               <DialogTrigger asChild>
-                <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-primary">
-                  <Pencil className="w-3 h-3" />
+                <button 
+                  className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
+                  title="Rename Member"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
                 </button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Edit Member</DialogTitle>
+                  <DialogTitle>Rename Member</DialogTitle>
                 </DialogHeader>
-                <div className="py-4 space-y-4">
-                  <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs text-muted-foreground">Current Frequency: {member.selectionFrequency}</p>
-                    <Button variant="ghost" size="sm" className="text-destructive" onClick={handleDelete}>
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Remove Member
-                    </Button>
+                <div className="py-6 space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Full Name</label>
+                    <Input 
+                      value={editName} 
+                      onChange={(e) => setEditName(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
+                      autoFocus
+                    />
+                  </div>
+                  
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-0.5">
+                        <p className="text-xs text-muted-foreground">Current Frequency</p>
+                        <p className="text-sm font-bold">{member.selectionFrequency}</p>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Remove Member
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 <DialogFooter>
+                  <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
                   <Button onClick={handleUpdate}>Save Changes</Button>
                 </DialogFooter>
               </DialogContent>
