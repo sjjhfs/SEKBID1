@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMembers } from "@/hooks/useMembers";
 import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
@@ -13,6 +13,7 @@ export default function Home() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const { members, loading, selectMember, resetAllData } = useMembers();
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
   // Automatically sign in anonymously if not already signed in
   useEffect(() => {
@@ -77,7 +78,11 @@ export default function Home() {
               Ensuring equitable selection for every occasion.
             </p>
           </div>
-          <AdminPanel onReset={resetAllData} />
+          <AdminPanel 
+            onReset={resetAllData} 
+            isAdminMode={isAdminMode} 
+            setIsAdminMode={setIsAdminMode} 
+          />
         </header>
 
         {/* Statistics Section */}
@@ -101,6 +106,7 @@ export default function Home() {
                 member={member}
                 isLowest={member.selectionFrequency === minInti}
                 onSelect={selectMember}
+                isAdminMode={isAdminMode}
               />
             ))}
           </div>
@@ -124,6 +130,7 @@ export default function Home() {
                 member={member}
                 isLowest={member.selectionFrequency === minAnggota}
                 onSelect={selectMember}
+                isAdminMode={isAdminMode}
               />
             ))}
           </div>

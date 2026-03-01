@@ -19,13 +19,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ShieldAlert, Trash2, UserPlus, Settings2 } from "lucide-react";
+import { ShieldAlert, Trash2, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMembers } from "@/hooks/useMembers";
 
-export function AdminPanel({ onReset }: { onReset: () => Promise<void> }) {
+interface AdminPanelProps {
+  onReset: () => Promise<void>;
+  isAdminMode: boolean;
+  setIsAdminMode: (mode: boolean) => void;
+}
+
+export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelProps) {
   const [password, setPassword] = useState("");
-  const [isAdminMode, setIsAdminMode] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
