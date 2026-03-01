@@ -55,20 +55,20 @@ export default function Home() {
       <SidebarInset>
         <div className="min-h-screen pb-20 pt-10 px-4 flex flex-col items-center">
           <main className="max-w-3xl w-full">
-            <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8 text-center md:text-left">
-              <div className="flex-1 flex flex-col md:flex-row gap-4 items-center md:items-start">
-                <SidebarTrigger className="md:-ml-2 mt-1 shrink-0" />
-                <div className="flex flex-col items-center md:items-start">
-                  <div className="flex items-center gap-2 mb-2">
+            <header className="flex flex-col items-center gap-6 mb-8 text-center">
+              <div className="flex flex-col gap-4 items-center w-full">
+                <div className="flex items-center gap-2 self-start md:self-center">
+                  <SidebarTrigger className="mt-1 shrink-0" />
+                  <div className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
                     <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                   </div>
-                  <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed max-w-lg">
-                    {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
-                  </p>
                 </div>
+                <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed max-w-lg">
+                  {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
+                </p>
               </div>
-              <div className="flex justify-center md:justify-end shrink-0">
+              <div className="flex justify-center shrink-0 w-full">
                 <AdminPanel 
                   onReset={resetAllData} 
                   onDeleteAll={deleteAllMembers}
