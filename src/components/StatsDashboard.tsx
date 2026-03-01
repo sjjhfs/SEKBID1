@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,11 +9,13 @@ export function StatsDashboard({ members }: { members: Member[] }) {
   const totalSelection = members.reduce((acc, m) => acc + m.selectionFrequency, 0);
   
   // Find members with the minimum frequency to show as "Priority"
-  const minFreq = members.length > 0 ? Math.min(...members.map(m => m.selectionFrequency)) : 0;
-  const priorityMembers = members.filter(m => m.selectionFrequency === minFreq);
+  // Exclude 'TERBATAS' from priority calculations per user request
+  const priorityEligibleMembers = members.filter(m => m.type !== 'TERBATAS');
+  const minFreq = priorityEligibleMembers.length > 0 ? Math.min(...priorityEligibleMembers.map(m => m.selectionFrequency)) : 0;
+  const priorityMembers = priorityEligibleMembers.filter(m => m.selectionFrequency === minFreq);
   
-  const priorityDisplay = members.length === 0 
-    ? "No Members" 
+  const priorityDisplay = priorityEligibleMembers.length === 0 
+    ? "No Eligible Members" 
     : priorityMembers.length === 1 
       ? priorityMembers[0].name 
       : `${priorityMembers.length} Candidates`;

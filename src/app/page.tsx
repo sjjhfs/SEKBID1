@@ -35,7 +35,6 @@ export default function Home() {
 
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
-  const minTerbatas = terbatasMembers.length > 0 ? Math.min(...terbatasMembers.map(m => m.selectionFrequency)) : 0;
 
   if (isUserLoading) {
     return (
@@ -153,7 +152,7 @@ export default function Home() {
               <MemberCard
                 key={member.id}
                 member={member}
-                isLowest={member.selectionFrequency === minTerbatas}
+                isLowest={false} // TERBATAS members are excluded from priority
                 onSelect={selectMember}
                 isAdminMode={isAdminMode}
               />
