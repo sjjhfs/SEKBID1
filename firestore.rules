@@ -16,9 +16,8 @@ service cloud.firestore {
      *
      * KEY SECURITY DECISIONS:
      * - Admin roles are validated via document existence in the 'roles_admin' collection.
-     * - Authenticated users are permitted to create and update member data to support 
-     *   initial seeding and the core greeting selection process.
-     * - Destructive operations (delete) are strictly reserved for admins.
+     * - Authenticated users are permitted to create, update, and delete member data to support 
+     *   the prototype's administrative workflow (which is gated by a client-side password).
      * - Read access is restricted to authenticated users to protect member identity and privacy.
      */
 
@@ -48,25 +47,25 @@ service cloud.firestore {
     // --- Collection Rules ---
 
     /**
-     * @description Rules for Member documents. All users can read, create (for seeding), and increment stats.
+     * @description Rules for Member documents. All users can read, create, update, and delete.
      * @path /members/{memberId}
      */
     match /members/{memberId} {
       allow get, list: if isSignedIn();
-      allow create: if isSignedIn(); // Allowed for initial auto-seeding by any user
+      allow create: if isSignedIn();
       allow update: if isSignedIn() && isExisting();
-      allow delete: if isAdmin() && isExisting();
+      allow delete: if isSignedIn() && isExisting();
     }
 
     /**
-     * @description Rules for the Global Statistics singleton. All users can view; only admins can modify/reset.
+     * @description Rules for the Global Statistics singleton. All users can view and modify.
      * @path /app_statistics/globalStats
      */
     match /app_statistics/{statId} {
       allow get, list: if isSignedIn();
-      allow create: if isSignedIn(); // Allowed for initial setup
+      allow create: if isSignedIn();
       allow update: if isSignedIn() && isExisting();
-      allow delete: if isAdmin() && isExisting();
+      allow delete: if isSignedIn() && isExisting();
     }
 
     /**
