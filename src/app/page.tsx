@@ -54,7 +54,7 @@ export default function Home() {
       <AppSidebar />
       <SidebarInset>
         <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
-          <main className="w-full">
+          <main className="w-full max-w-5xl mx-auto">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
@@ -92,13 +92,15 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <>
-                <StatsDashboard members={members} />
+              <div className="flex flex-col items-center">
+                <div className="w-full max-w-4xl">
+                  <StatsDashboard members={members} />
+                </div>
 
-                <div className="flex flex-col lg:flex-row gap-12 lg:items-start overflow-x-auto pb-10">
+                <div className="flex flex-col gap-20 w-full items-center">
                   {/* INTI Section */}
-                  <section className="scroll-mt-20 flex-shrink-0 min-w-[500px]" id="inti">
-                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
+                  <section className="scroll-mt-20 w-full flex flex-col items-center" id="inti">
+                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-[500px]">
                       <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-6 h-6" />
                         INTI
@@ -125,8 +127,8 @@ export default function Home() {
                   </section>
 
                   {/* ANGGOTA Section */}
-                  <section className="scroll-mt-20 flex-shrink-0 min-w-[500px]" id="anggota">
-                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
+                  <section className="scroll-mt-20 w-full flex flex-col items-center" id="anggota">
+                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-[500px]">
                       <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-6 h-6" />
                         ANGGOTA
@@ -153,8 +155,8 @@ export default function Home() {
                   </section>
 
                   {/* TERBATAS Section */}
-                  <section className="scroll-mt-20 flex-shrink-0 min-w-[500px]" id="terbatas">
-                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
+                  <section className="scroll-mt-20 w-full flex flex-col items-center" id="terbatas">
+                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-[500px]">
                       <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                         <UsersRound className="w-6 h-6" />
                         TERBATAS
@@ -180,7 +182,7 @@ export default function Home() {
                     )}
                   </section>
                 </div>
-              </>
+              </div>
             )}
 
             <footer className="mt-16 text-center text-sm text-muted-foreground">
