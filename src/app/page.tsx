@@ -9,17 +9,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus, Sparkles, Loader2, UsersRound } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { AppSidebar } from "@/components/AppSidebar";
-import { SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Home() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  const { state } = useSidebar();
   const { members, loading, selectMember, resetAllData, deleteAllMembers } = useMembers();
   const [isAdminMode, setIsAdminMode] = useState(false);
-
-  const isCollapsed = state === "collapsed";
 
   useEffect(() => {
     if (!isUserLoading && !user && auth) {
@@ -58,26 +54,17 @@ export default function Home() {
       <AppSidebar />
       <SidebarInset>
         <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
-          <main className={cn(
-            "w-full flex flex-col transition-all duration-300",
-            isCollapsed ? "items-center" : "items-start"
-          )}>
-            <header className={cn(
-              "flex flex-col mb-12 w-full transition-all duration-300",
-              isCollapsed ? "items-center text-center max-w-4xl" : "items-start text-left max-w-full"
-            )}>
-              <div className={cn(
-                "w-full flex flex-col gap-6 md:flex-row md:items-center",
-                isCollapsed ? "justify-center" : "justify-between"
-              )}>
-                <div className={cn("flex items-center gap-4", isCollapsed ? "justify-center" : "justify-start")}>
+          <main className="w-full flex flex-col items-start">
+            <header className="flex flex-col mb-12 w-full items-start text-left max-w-full">
+              <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
+                <div className="flex items-center gap-4 justify-start">
                   <SidebarTrigger className="mt-1 shrink-0" />
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle shrink-0" />
                     <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                   </div>
                 </div>
-                <div className={cn("flex", isCollapsed ? "justify-center" : "justify-end")}>
+                <div className="flex justify-end">
                   <AdminPanel 
                     onReset={resetAllData} 
                     onDeleteAll={deleteAllMembers}
@@ -86,10 +73,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <p className={cn(
-                "text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed",
-                isCollapsed ? "text-center mx-auto" : "text-left"
-              )}>
+              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed text-left">
                 {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
               </p>
             </header>
@@ -100,7 +84,7 @@ export default function Home() {
                   <Skeleton className="h-24" />
                   <Skeleton className="h-24" />
                 </div>
-                <div className="space-y-4 flex flex-col items-center">
+                <div className="space-y-4">
                   <Skeleton className="h-8 w-32" />
                   <div className="grid gap-3 w-full max-w-[500px]">
                     {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
@@ -108,17 +92,14 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <div className={cn("w-full transition-all duration-300", isCollapsed ? "max-w-4xl" : "max-w-full")}>
-                <div className={cn("mb-12 flex", isCollapsed ? "justify-center" : "justify-start")}>
+              <div className="w-full max-w-full">
+                <div className="mb-12 flex justify-start">
                   <div className="w-full">
-                    <StatsDashboard members={members} alignment={isCollapsed ? 'center' : 'left'} />
+                    <StatsDashboard members={members} alignment="left" />
                   </div>
                 </div>
 
-                <div className={cn(
-                  "flex flex-wrap gap-12 xl:gap-8 w-full",
-                  isCollapsed ? "justify-center" : "justify-start"
-                )}>
+                <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-start">
                   {/* INTI Section */}
                   <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
@@ -206,10 +187,7 @@ export default function Home() {
               </div>
             )}
 
-            <footer className={cn(
-              "mt-24 text-center text-sm text-muted-foreground border-t border-border pt-8 w-full",
-              isCollapsed ? "max-w-4xl" : "max-w-full"
-            )}>
+            <footer className="mt-24 text-center text-sm text-muted-foreground border-t border-border pt-8 w-full max-w-full">
               <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
             </footer>
           </main>
