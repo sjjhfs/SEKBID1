@@ -12,67 +12,136 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ShieldAlert, Trash2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ShieldAlert, Trash2, UserPlus, Settings2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useMembers } from "@/hooks/useMembers";
 
 export function AdminPanel({ onReset }: { onReset: () => Promise<void> }) {
   const [password, setPassword] = useState("");
-  const [open, setOpen] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newType, setNewType] = useState<"INTI" | "ANGGOTA">("ANGGOTA");
+  
+  const { addMember } = useMembers();
   const { toast } = useToast();
 
-  const handleReset = async () => {
+  const handleLogin = () => {
     if (password === "admin123") {
-      await onReset();
-      toast({
-        title: "Success",
-        description: "All frequencies have been reset to zero.",
-      });
-      setOpen(false);
-      setPassword("");
+      setIsAdminMode(true);
+      toast({ title: "Admin Mode Enabled" });
     } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Invalid admin password.",
-      });
+      toast({ variant: "destructive", title: "Invalid Password" });
     }
+    setPassword("");
   };
 
+  const handleReset = async () => {
+    await onReset();
+    toast({ title: "Data Reset", description: "All frequencies cleared." });
+    setResetDialogOpen(false);
+  };
+
+  const handleAddMember = async () => {
+    if (!newName.trim()) return;
+    await addMember(newName, newType);
+    toast({ title: "Member Added", description: `${newName} added to ${newType}.` });
+    setNewName("");
+    setAddDialogOpen(false);
+  };
+
+  if (!isAdminMode) {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+            <ShieldAlert className="w-4 h-4 mr-2" />
+            Admin Login
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Admin Access</DialogTitle>
+            <DialogDescription>Enter password to manage members and reset data.</DialogDescription>
+          </DialogHeader>
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
+          <DialogFooter>
+            <Button onClick={handleLogin}>Login</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive transition-colors">
-          <ShieldAlert className="w-4 h-4 mr-2" />
-          Admin Reset
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Trash2 className="w-5 h-5 text-destructive" />
-            Reset All Data
-          </DialogTitle>
-          <DialogDescription>
-            This will set all member selection counts back to zero. This action cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Admin Password</label>
-            <Input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleReset()}
-            />
+    <div className="flex gap-2">
+      {/* Add Member */}
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm">
+            <UserPlus className="w-4 h-4 mr-2" />
+            Add Member
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Member</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input placeholder="Full Name" value={newName} onChange={(e) => setNewName(e.target.value)} />
+            <Select value={newType} onValueChange={(v: any) => setNewType(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="INTI">INTI</SelectItem>
+                <SelectItem value="ANGGOTA">ANGGOTA</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="destructive" onClick={handleReset}>Confirm Reset</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button onClick={handleAddMember}>Add Member</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Data */}
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="destructive" size="sm">
+            <Trash2 className="w-4 h-4 mr-2" />
+            Reset
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset All Data?</DialogTitle>
+            <DialogDescription>This will clear all selection counts. This cannot be undone.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setResetDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleReset}>Confirm Reset</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Button variant="ghost" size="sm" onClick={() => setIsAdminMode(false)}>
+        Exit Admin
+      </Button>
+    </div>
   );
 }

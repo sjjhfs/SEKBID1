@@ -3,9 +3,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Member } from "@/types/member";
 import { Users, BarChart3, Star } from "lucide-react";
+import { useMembers } from "@/hooks/useMembers";
 
 export function StatsDashboard({ members }: { members: Member[] }) {
-  const totalSelections = members.reduce((acc, m) => acc + m.selectionFrequency, 0);
+  const { globalStats } = useMembers();
+  
+  // Use global stats from Firestore if available, otherwise fall back to local calculation
+  const totalSelections = globalStats?.totalSelectionsMade ?? members.reduce((acc, m) => acc + m.selectionFrequency, 0);
   const selectedCount = members.filter(m => m.selectionFrequency > 0).length;
   const participationRate = members.length > 0 
     ? Math.round((selectedCount / members.length) * 100) 
@@ -19,7 +23,7 @@ export function StatsDashboard({ members }: { members: Member[] }) {
             <BarChart3 className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground font-medium">Total Selections</p>
+            <p className="text-sm text-muted-foreground font-medium">Global Selections</p>
             <h3 className="text-2xl font-bold">{totalSelections}</h3>
           </div>
         </CardContent>
