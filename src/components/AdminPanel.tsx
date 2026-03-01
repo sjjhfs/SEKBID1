@@ -41,7 +41,7 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
   const { toast } = useToast();
 
   const handleLogin = () => {
-    if (password === "admin123") {
+    if (password === "sekbid1haleluya") {
       setIsAdminMode(true);
       toast({ title: "Admin Mode Enabled" });
     } else {
