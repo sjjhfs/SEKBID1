@@ -95,9 +95,9 @@ export default function Home() {
               <>
                 <StatsDashboard members={members} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="flex flex-col lg:flex-row gap-12 lg:items-start overflow-x-auto pb-10">
                   {/* INTI Section */}
-                  <section className="scroll-mt-20" id="inti">
+                  <section className="scroll-mt-20 flex-shrink-0 min-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                       <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-6 h-6" />
@@ -125,7 +125,7 @@ export default function Home() {
                   </section>
 
                   {/* ANGGOTA Section */}
-                  <section className="scroll-mt-20" id="anggota">
+                  <section className="scroll-mt-20 flex-shrink-0 min-w-[500px]" id="anggota">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                       <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-6 h-6" />
@@ -153,7 +153,7 @@ export default function Home() {
                   </section>
 
                   {/* TERBATAS Section */}
-                  <section className="scroll-mt-20" id="terbatas">
+                  <section className="scroll-mt-20 flex-shrink-0 min-w-[500px]" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                       <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                         <UsersRound className="w-6 h-6" />
