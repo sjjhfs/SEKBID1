@@ -54,21 +54,21 @@ export default function Home() {
       <AppSidebar />
       <SidebarInset>
         <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
-          <main className="w-full max-w-[1700px] mx-auto">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-              <div className="flex flex-col gap-4">
+          <main className="w-full flex flex-col items-center">
+            <header className="flex flex-col items-center text-center mb-12 w-full max-w-4xl">
+              <div className="flex flex-col items-center gap-4 mb-8">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger className="mt-1" />
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
-                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                   </div>
                 </div>
-                <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
+                <p className="text-muted-foreground text-lg md:text-xl whitespace-pre-line leading-relaxed max-w-2xl mx-auto">
                   {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
                 </p>
               </div>
-              <div className="shrink-0">
+              <div className="w-full flex justify-center">
                 <AdminPanel 
                   onReset={resetAllData} 
                   onDeleteAll={deleteAllMembers}
@@ -79,27 +79,29 @@ export default function Home() {
             </header>
 
             {loading && members.length === 0 ? (
-              <div className="space-y-8">
+              <div className="w-full max-w-4xl space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Skeleton className="h-24" />
                   <Skeleton className="h-24" />
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4 flex flex-col items-center">
                   <Skeleton className="h-8 w-32" />
-                  <div className="grid gap-3">
+                  <div className="grid gap-3 w-full max-w-[500px]">
                     {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
                   </div>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center w-full">
-                <div className="w-full max-w-4xl mb-8">
-                  <StatsDashboard members={members} />
+                <div className="w-full max-w-4xl mb-12 flex justify-center">
+                  <div className="w-full">
+                    <StatsDashboard members={members} />
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 justify-items-center w-full">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 xl:gap-8 justify-items-center w-full max-w-[1700px]">
                   {/* INTI Section */}
-                  <section className="scroll-mt-20 flex flex-col items-center w-[500px]" id="inti">
+                  <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-6 h-6" />
@@ -127,7 +129,7 @@ export default function Home() {
                   </section>
 
                   {/* ANGGOTA Section */}
-                  <section className="scroll-mt-20 flex flex-col items-center w-[500px]" id="anggota">
+                  <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="anggota">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-6 h-6" />
@@ -155,7 +157,7 @@ export default function Home() {
                   </section>
 
                   {/* TERBATAS Section */}
-                  <section className="scroll-mt-20 flex flex-col items-center w-[500px]" id="terbatas">
+                  <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                         <UsersRound className="w-6 h-6" />
@@ -185,7 +187,7 @@ export default function Home() {
               </div>
             )}
 
-            <footer className="mt-16 text-center text-sm text-muted-foreground">
+            <footer className="mt-24 text-center text-sm text-muted-foreground border-t border-border pt-8 w-full max-w-4xl">
               <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
             </footer>
           </main>
