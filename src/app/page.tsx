@@ -53,27 +53,29 @@ export default function Home() {
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4">
-          <main className="max-w-3xl mx-auto">
-            <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-              <div className="flex-1 flex gap-4">
-                <SidebarTrigger className="-ml-2 mt-2" />
-                <div>
+        <div className="min-h-screen pb-20 pt-10 px-4 flex flex-col items-center">
+          <main className="max-w-3xl w-full">
+            <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8 text-center md:text-left">
+              <div className="flex-1 flex flex-col md:flex-row gap-4 items-center md:items-start">
+                <SidebarTrigger className="md:-ml-2 mt-1 shrink-0" />
+                <div className="flex flex-col items-center md:items-start">
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
-                    <h1 className="text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
+                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                   </div>
-                  <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
+                  <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed max-w-lg">
                     {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
                   </p>
                 </div>
               </div>
-              <AdminPanel 
-                onReset={resetAllData} 
-                onDeleteAll={deleteAllMembers}
-                isAdminMode={isAdminMode} 
-                setIsAdminMode={setIsAdminMode} 
-              />
+              <div className="flex justify-center md:justify-end shrink-0">
+                <AdminPanel 
+                  onReset={resetAllData} 
+                  onDeleteAll={deleteAllMembers}
+                  isAdminMode={isAdminMode} 
+                  setIsAdminMode={setIsAdminMode} 
+                />
+              </div>
             </header>
 
             {loading && members.length === 0 ? (
@@ -95,7 +97,7 @@ export default function Home() {
 
                 {/* INTI Section */}
                 <section className="mb-12 scroll-mt-20" id="inti">
-                  <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+                  <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                     <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
                       <UserPlus className="w-6 h-6" />
                       INTI
@@ -105,7 +107,7 @@ export default function Home() {
                     </span>
                   </div>
                   {intiMembers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+                    <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
                   ) : (
                     <div className="grid gap-3">
                       {intiMembers.map((member) => (
@@ -123,7 +125,7 @@ export default function Home() {
 
                 {/* ANGGOTA Section */}
                 <section className="mb-12 scroll-mt-20" id="anggota">
-                  <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+                  <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                     <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
                       <UserPlus className="w-6 h-6" />
                       ANGGOTA
@@ -133,7 +135,7 @@ export default function Home() {
                     </span>
                   </div>
                   {anggotaMembers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+                    <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
                   ) : (
                     <div className="grid gap-3">
                       {anggotaMembers.map((member) => (
@@ -151,7 +153,7 @@ export default function Home() {
 
                 {/* TERBATAS Section */}
                 <section className="scroll-mt-20" id="terbatas">
-                  <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+                  <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                     <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                       <UsersRound className="w-6 h-6" />
                       TERBATAS
@@ -161,7 +163,7 @@ export default function Home() {
                     </span>
                   </div>
                   {terbatasMembers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+                    <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
                   ) : (
                     <div className="grid gap-3">
                       {terbatasMembers.map((member) => (
