@@ -54,17 +54,17 @@ export default function Home() {
       <AppSidebar />
       <SidebarInset>
         <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
-          <main className="w-full flex flex-col items-start">
-            <header className="flex flex-col mb-12 w-full items-start text-left max-w-full">
+          <main className="w-full flex flex-col items-center sm:items-start max-w-6xl mx-auto sm:mx-0">
+            <header className="flex flex-col mb-12 w-full items-center sm:items-start text-center sm:text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
-                <div className="flex items-center gap-4 justify-start">
+                <div className="flex items-center gap-4 justify-center sm:justify-start">
                   <SidebarTrigger className="mt-1 shrink-0" />
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle shrink-0" />
                     <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                   </div>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-center sm:justify-end">
                   <AdminPanel 
                     onReset={resetAllData} 
                     onDeleteAll={deleteAllMembers}
@@ -73,13 +73,13 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed text-left">
+              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed max-w-2xl">
                 {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
               </p>
             </header>
 
             {loading && members.length === 0 ? (
-              <div className="w-full max-w-6xl space-y-8">
+              <div className="w-full space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Skeleton className="h-24" />
                   <Skeleton className="h-24" />
@@ -92,19 +92,19 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <div className="w-full max-w-full">
-                <div className="mb-12 flex justify-start">
-                  <div className="w-full">
+              <div className="w-full">
+                <div className="mb-12 flex justify-center sm:justify-start">
+                  <div className="w-full max-w-2xl sm:max-w-full">
                     <StatsDashboard members={members} alignment="left" />
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-start">
+                <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-center sm:justify-start">
                   {/* INTI Section */}
                   <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
-                      <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
-                        <UserPlus className="w-6 h-6" />
+                      <h2 className="text-xl sm:text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
+                        <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
                         INTI
                       </h2>
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
@@ -131,8 +131,8 @@ export default function Home() {
                   {/* ANGGOTA Section */}
                   <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="anggota">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
-                      <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
-                        <UserPlus className="w-6 h-6" />
+                      <h2 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
+                        <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
                         ANGGOTA
                       </h2>
                       <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">
@@ -159,8 +159,8 @@ export default function Home() {
                   {/* TERBATAS Section */}
                   <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
-                      <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
-                        <UsersRound className="w-6 h-6" />
+                      <h2 className="text-xl sm:text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
+                        <UsersRound className="w-5 h-5 sm:w-6 sm:h-6" />
                         TERBATAS
                       </h2>
                       <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">

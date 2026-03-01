@@ -55,118 +55,123 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
 
   return (
     <div className={cn(
-      "member-row-frame group flex items-center justify-between gap-4 w-full max-w-[500px]",
+      "member-row-frame group",
       isLowest && !isTerbatas && "priority-highlight border-destructive/30",
       isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30"
     )}>
-      <div className="flex items-center gap-3 min-w-0">
-        <div className={cn(
-          "shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-          isLowest 
-            ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-            : "bg-primary/10 text-primary"
-        )}>
-          <UserCircle2 className="w-6 h-6" />
-        </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h4 className="font-semibold text-base truncate">{member.name}</h4>
-            
-            {isAdminMode && (
-              <Dialog open={editOpen} onOpenChange={(open) => {
-                setEditOpen(open);
-                if (open) setEditName(member.name);
-              }}>
-                <DialogTrigger asChild>
-                  <button 
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
-                    title="Rename Member"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Rename Member</DialogTitle>
-                  </DialogHeader>
-                  <div className="py-6 space-y-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-muted-foreground">Full Name</label>
-                      <Input 
-                        value={editName} 
-                        onChange={(e) => setEditName(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
-                        autoFocus
-                      />
-                    </div>
-                    
-                    <div className="pt-4 border-t border-border">
-                      <div className="flex justify-between items-center">
-                        <div className="space-y-0.5">
-                          <p className="text-xs text-muted-foreground">Current Frequency</p>
-                          <p className="text-sm font-bold">{member.selectionFrequency}</p>
-                        </div>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Remove Member
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
-                    <Button onClick={handleUpdate}>Save Changes</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-xs text-muted-foreground">Frequency:</span>
-            <span className={cn(
-              "text-xs font-bold px-1.5 py-0.5 rounded",
-              isLowest 
-                ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-                : "bg-muted text-foreground"
-            )}>
-              {member.selectionFrequency}
-            </span>
-            {isLowest && (
-              <Badge 
-                className={cn(
-                  "text-[10px] h-4 uppercase px-1",
-                  isTerbatas ? "terbatas-priority-badge" : "priority-badge"
-                )}
-              >
-                Priority
-              </Badge>
-            )}
-          </div>
-        </div>
+      {/* COLUMN 1: Avatar */}
+      <div className={cn(
+        "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0",
+        isLowest 
+          ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
+          : "bg-primary/10 text-primary"
+      )}>
+        <UserCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
       </div>
 
-      <Button
-        onClick={handleSelect}
-        disabled={isSelecting}
-        size="lg"
-        className={cn(
-          "relative overflow-hidden transition-all duration-300 min-w-[100px]",
-          isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
+      {/* COLUMN 2: Name & Admin Controls */}
+      <div className="flex items-center gap-1 min-w-0 overflow-hidden">
+        <h4 className="font-semibold text-sm sm:text-base truncate">{member.name}</h4>
+        {isAdminMode && (
+          <Dialog open={editOpen} onOpenChange={(open) => {
+            setEditOpen(open);
+            if (open) setEditName(member.name);
+          }}>
+            <DialogTrigger asChild>
+              <button 
+                className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors shrink-0"
+                title="Rename Member"
+              >
+                <Pencil className="w-3 h-3" />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Rename Member</DialogTitle>
+              </DialogHeader>
+              <div className="py-6 space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Full Name</label>
+                  <Input 
+                    value={editName} 
+                    onChange={(e) => setEditName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
+                    autoFocus
+                  />
+                </div>
+                
+                <div className="pt-4 border-t border-border">
+                  <div className="flex justify-between items-center">
+                    <div className="space-y-0.5">
+                      <p className="text-xs text-muted-foreground">Current Frequency</p>
+                      <p className="text-sm font-bold">{member.selectionFrequency}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Remove Member
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
+                <Button onClick={handleUpdate}>Save Changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
-      >
+      </div>
+
+      {/* COLUMN 3: Frequency */}
+      <div className="text-center shrink-0">
         <span className={cn(
-          "flex items-center gap-2",
-          isSelecting ? "scale-0 opacity-0" : "scale-100 opacity-100"
+          "text-xs sm:text-sm font-bold px-1.5 py-0.5 rounded tabular-nums",
+          isLowest 
+            ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
+            : "bg-muted text-foreground"
         )}>
-          Select
+          {member.selectionFrequency}
         </span>
-        {isSelecting && (
-          <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in-50">
-            <Check className="w-5 h-5 text-white" />
-          </div>
+      </div>
+
+      {/* COLUMN 4: Priority Badge */}
+      <div className="flex justify-center shrink-0">
+        {isLowest && (
+          <Badge 
+            className={cn(
+              "text-[9px] sm:text-[10px] h-4 uppercase px-1 leading-none font-bold",
+              isTerbatas ? "terbatas-priority-badge" : "priority-badge"
+            )}
+          >
+            Prio
+          </Badge>
         )}
-      </Button>
+      </div>
+
+      {/* COLUMN 5: Select Button */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSelect}
+          disabled={isSelecting}
+          size="sm"
+          className={cn(
+            "h-8 sm:h-10 w-full relative overflow-hidden transition-all duration-300",
+            isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
+          )}
+        >
+          <span className={cn(
+            "text-xs sm:text-sm font-bold",
+            isSelecting ? "scale-0 opacity-0" : "scale-100 opacity-100"
+          )}>
+            Select
+          </span>
+          {isSelecting && (
+            <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in-50">
+              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
