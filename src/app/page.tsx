@@ -12,7 +12,7 @@ import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 export default function Home() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  const { members, loading, selectMember, resetAllData } = useMembers();
+  const { members, loading, selectMember, resetAllData, deleteAllMembers } = useMembers();
   const [isAdminMode, setIsAdminMode] = useState(false);
 
   useEffect(() => {
@@ -84,6 +84,7 @@ export default function Home() {
           </div>
           <AdminPanel 
             onReset={resetAllData} 
+            onDeleteAll={deleteAllMembers}
             isAdminMode={isAdminMode} 
             setIsAdminMode={setIsAdminMode} 
           />
@@ -102,17 +103,21 @@ export default function Home() {
               {intiMembers.length}
             </span>
           </div>
-          <div className="grid gap-3">
-            {intiMembers.map((member) => (
-              <MemberCard
-                key={member.id}
-                member={member}
-                isLowest={member.selectionFrequency === minInti}
-                onSelect={selectMember}
-                isAdminMode={isAdminMode}
-              />
-            ))}
-          </div>
+          {intiMembers.length === 0 ? (
+            <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+          ) : (
+            <div className="grid gap-3">
+              {intiMembers.map((member) => (
+                <MemberCard
+                  key={member.id}
+                  member={member}
+                  isLowest={member.selectionFrequency === minInti}
+                  onSelect={selectMember}
+                  isAdminMode={isAdminMode}
+                />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* ANGGOTA Section */}
@@ -126,17 +131,21 @@ export default function Home() {
               {anggotaMembers.length}
             </span>
           </div>
-          <div className="grid gap-3">
-            {anggotaMembers.map((member) => (
-              <MemberCard
-                key={member.id}
-                member={member}
-                isLowest={member.selectionFrequency === minAnggota}
-                onSelect={selectMember}
-                isAdminMode={isAdminMode}
-              />
-            ))}
-          </div>
+          {anggotaMembers.length === 0 ? (
+            <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+          ) : (
+            <div className="grid gap-3">
+              {anggotaMembers.map((member) => (
+                <MemberCard
+                  key={member.id}
+                  member={member}
+                  isLowest={member.selectionFrequency === minAnggota}
+                  onSelect={selectMember}
+                  isAdminMode={isAdminMode}
+                />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* TERBATAS Section */}
@@ -150,17 +159,21 @@ export default function Home() {
               {terbatasMembers.length}
             </span>
           </div>
-          <div className="grid gap-3">
-            {terbatasMembers.map((member) => (
-              <MemberCard
-                key={member.id}
-                member={member}
-                isLowest={member.selectionFrequency === minTerbatas}
-                onSelect={selectMember}
-                isAdminMode={isAdminMode}
-              />
-            ))}
-          </div>
+          {terbatasMembers.length === 0 ? (
+            <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+          ) : (
+            <div className="grid gap-3">
+              {terbatasMembers.map((member) => (
+                <MemberCard
+                  key={member.id}
+                  member={member}
+                  isLowest={member.selectionFrequency === minTerbatas}
+                  onSelect={selectMember}
+                  isAdminMode={isAdminMode}
+                />
+              ))}
+            </div>
+          )}
         </section>
 
         <footer className="mt-16 text-center text-sm text-muted-foreground">

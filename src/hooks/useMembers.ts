@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc } from '@/firebase';
-import { collection, doc, writeBatch, increment, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, writeBatch, increment, serverTimestamp, getDocs } from 'firebase/firestore';
 import { Member, MemberCategory } from '@/types/member';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
@@ -26,7 +26,11 @@ export function useMembers() {
   const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
 
   useEffect(() => {
-    if (!loading && members !== null && members.length === 0 && firestore) {
+    // Only seed if:
+    // 1. Loading is finished for both members and stats
+    // 2. Members collection is empty
+    // 3. Global stats document does not exist yet (indicates first-time setup)
+    if (!loading && !statsLoading && members !== null && members.length === 0 && !globalStats && firestore) {
       const batch = writeBatch(firestore);
       
       INITIAL_MEMBERS.forEach((m) => {
@@ -42,7 +46,8 @@ export function useMembers() {
       const sRef = doc(firestore, 'app_statistics', 'globalStats');
       batch.set(sRef, {
         totalSelectionsMade: 0,
-        membersSelectedAtLeastOnceCount: 0
+        membersSelectedAtLeastOnceCount: 0,
+        isInitialized: true
       }, { merge: true });
       
       batch.commit().catch((err) => {
@@ -52,7 +57,7 @@ export function useMembers() {
         }));
       });
     }
-  }, [loading, members, firestore]);
+  }, [loading, statsLoading, members, globalStats, firestore]);
 
   const selectMember = async (id: string) => {
     if (!firestore) return;
@@ -95,6 +100,31 @@ export function useMembers() {
     deleteDocumentNonBlocking(memberRef);
   };
 
+  const deleteAllMembers = async () => {
+    if (!firestore || !members) return;
+    const batch = writeBatch(firestore);
+    
+    // Delete all member documents
+    members.forEach((m) => {
+      const docRef = doc(firestore, 'members', m.id);
+      batch.delete(docRef);
+    });
+
+    // Reset stats but keep the initialization flag so it doesn't re-seed automatically
+    const sRef = doc(firestore, 'app_statistics', 'globalStats');
+    batch.update(sRef, { 
+      totalSelectionsMade: 0, 
+      membersSelectedAtLeastOnceCount: 0 
+    });
+    
+    batch.commit().catch((err) => {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({
+        path: 'members',
+        operation: 'delete',
+      }));
+    });
+  };
+
   const resetAllData = async () => {
     if (!firestore || !members) return;
     const batch = writeBatch(firestore);
@@ -123,6 +153,7 @@ export function useMembers() {
     addMember,
     updateMember,
     deleteMember,
+    deleteAllMembers,
     resetAllData 
   };
 }

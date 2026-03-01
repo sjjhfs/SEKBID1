@@ -19,20 +19,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ShieldAlert, Trash2, UserPlus } from "lucide-react";
+import { ShieldAlert, Trash2, UserPlus, Users2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMembers } from "@/hooks/useMembers";
 import { MemberCategory } from "@/types/member";
 
 interface AdminPanelProps {
   onReset: () => Promise<void>;
+  onDeleteAll: () => Promise<void>;
   isAdminMode: boolean;
   setIsAdminMode: (mode: boolean) => void;
 }
 
-export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelProps) {
+export function AdminPanel({ onReset, onDeleteAll, isAdminMode, setIsAdminMode }: AdminPanelProps) {
   const [password, setPassword] = useState("");
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newType, setNewType] = useState<MemberCategory>("ANGGOTA");
@@ -52,8 +54,14 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
 
   const handleReset = async () => {
     await onReset();
-    toast({ title: "Data Reset", description: "All frequencies cleared." });
+    toast({ title: "Frequency Reset", description: "All selection counts cleared." });
     setResetDialogOpen(false);
+  };
+
+  const handleDeleteAll = async () => {
+    await onDeleteAll();
+    toast({ title: "Roster Cleared", description: "All members have been removed." });
+    setDeleteDialogOpen(false);
   };
 
   const handleAddMember = async () => {
@@ -94,7 +102,7 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2 justify-end">
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
@@ -127,19 +135,38 @@ export function AdminPanel({ onReset, isAdminMode, setIsAdminMode }: AdminPanelP
 
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant="destructive" size="sm">
+          <Button variant="secondary" size="sm">
             <Trash2 className="w-4 h-4 mr-2" />
-            Reset
+            Reset Freq
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset All Data?</DialogTitle>
-            <DialogDescription>This will clear all selection counts. This cannot be undone.</DialogDescription>
+            <DialogTitle>Reset Selection Counts?</DialogTitle>
+            <DialogDescription>This will clear all selection counts but keep the members. This cannot be undone.</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setResetDialogOpen(false)}>Cancel</Button>
             <Button variant="destructive" onClick={handleReset}>Confirm Reset</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="destructive" size="sm">
+            <Users2 className="w-4 h-4 mr-2" />
+            Clear Roster
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete All Members?</DialogTitle>
+            <DialogDescription>This will permanently remove EVERY member from the list. This cannot be undone.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeleteAll}>Delete Everything</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
