@@ -72,14 +72,14 @@ export default function Home() {
   return (
     <div className="min-h-screen pb-20 pt-10 px-4">
       <main className="max-w-3xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
+        <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
               <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
               <h1 className="text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
             </div>
-            <p className="text-muted-foreground text-lg">
-              Ensuring equitable selection for every occasion.
+            <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
+              {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
             </p>
           </div>
           <AdminPanel 
@@ -94,7 +94,7 @@ export default function Home() {
         {/* INTI Section */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
-            <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
               <UserPlus className="w-6 h-6" />
               INTI
             </h2>
@@ -118,7 +118,7 @@ export default function Home() {
         {/* ANGGOTA Section */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
-            <h2 className="text-2xl font-bold text-accent flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
               <UserPlus className="w-6 h-6" />
               ANGGOTA
             </h2>
@@ -142,7 +142,7 @@ export default function Home() {
         {/* TERBATAS Section */}
         <section>
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
-            <h2 className="text-2xl font-bold text-priority flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
               <UsersRound className="w-6 h-6" />
               TERBATAS
             </h2>
