@@ -53,22 +53,22 @@ export default function Home() {
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4 flex flex-col items-center">
-          <main className="max-w-3xl w-full">
-            <header className="flex flex-col items-center gap-6 mb-8 text-center">
-              <div className="flex flex-col gap-4 items-center w-full">
-                <div className="flex items-center gap-2 self-start md:self-center">
-                  <SidebarTrigger className="mt-1 shrink-0" />
+        <div className="min-h-screen pb-20 pt-10 px-8">
+          <main className="max-w-4xl">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <SidebarTrigger className="mt-1" />
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
                     <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                   </div>
                 </div>
-                <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed max-w-lg">
+                <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
                   {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
                 </p>
               </div>
-              <div className="flex justify-center shrink-0 w-full">
+              <div className="shrink-0">
                 <AdminPanel 
                   onReset={resetAllData} 
                   onDeleteAll={deleteAllMembers}
