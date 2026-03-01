@@ -6,7 +6,8 @@ import { Member } from '@/types/member';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
 import { useEffect } from 'react';
-import { setDoc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 export function useMembers() {
   const firestore = useFirestore();
@@ -26,11 +27,17 @@ export function useMembers() {
         const docRef = doc(collection(firestore, 'members'), m.id);
         batch.set(docRef, {
           name: m.name,
-          type: m.category,
+          type: m.type,
           selectionFrequency: 0
         });
       });
-      batch.commit().catch(console.error);
+      
+      batch.commit().catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: 'members',
+          operation: 'write',
+        }));
+      });
     }
   }, [loading, members, firestore]);
 
@@ -49,9 +56,13 @@ export function useMembers() {
       const docRef = doc(firestore, 'members', m.id);
       batch.update(docRef, { selectionFrequency: 0 });
     });
-    // We don't await the batch for immediate UI response, though batches don't have a non-blocking helper yet
-    // we use the standard promise and handle errors silently or via standard Firebase behavior
-    batch.commit().catch(console.error);
+    
+    batch.commit().catch((err) => {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({
+        path: 'members',
+        operation: 'update',
+      }));
+    });
   };
 
   return { 
