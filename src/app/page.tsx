@@ -94,7 +94,7 @@ export default function Home() {
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
             <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
               <UserPlus className="w-6 h-6" />
-              INTI MEMBERS
+              INTI
             </h2>
             <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
               {intiMembers.length}
@@ -118,7 +118,7 @@ export default function Home() {
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
             <h2 className="text-2xl font-bold text-accent flex items-center gap-2">
               <UserPlus className="w-6 h-6" />
-              ANGGOTA MEMBERS
+              ANGGOTA
             </h2>
             <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">
               {anggotaMembers.length}
@@ -142,7 +142,7 @@ export default function Home() {
           <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
             <h2 className="text-2xl font-bold text-priority flex items-center gap-2">
               <UsersRound className="w-6 h-6" />
-              TERBATAS MEMBERS
+              TERBATAS
             </h2>
             <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">
               {terbatasMembers.length}
