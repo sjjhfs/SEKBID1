@@ -11,17 +11,17 @@ export default function Home() {
   const { members, loading, selectMember, resetAllData } = useMembers();
 
   const intiMembers = members
-    .filter(m => m.category === 'INTI')
-    .sort((a, b) => a.count - b.count);
+    .filter(m => m.type === 'INTI')
+    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
   const anggotaMembers = members
-    .filter(m => m.category === 'ANGGOTA')
-    .sort((a, b) => a.count - b.count);
+    .filter(m => m.type === 'ANGGOTA')
+    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
-  const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.count)) : 0;
-  const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.count)) : 0;
+  const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
+  const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
 
-  if (loading) {
+  if (loading && members.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
         <div className="space-y-4">
@@ -79,7 +79,7 @@ export default function Home() {
               <MemberCard
                 key={member.id}
                 member={member}
-                isLowest={member.count === minInti}
+                isLowest={member.selectionFrequency === minInti}
                 onSelect={selectMember}
               />
             ))}
@@ -102,7 +102,7 @@ export default function Home() {
               <MemberCard
                 key={member.id}
                 member={member}
-                isLowest={member.count === minAnggota}
+                isLowest={member.selectionFrequency === minAnggota}
                 onSelect={selectMember}
               />
             ))}
@@ -111,7 +111,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="mt-16 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Realtime DB</p>
+          <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
         </footer>
       </main>
     </div>

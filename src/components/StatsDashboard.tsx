@@ -5,8 +5,8 @@ import { Member } from "@/types/member";
 import { Users, BarChart3, Star } from "lucide-react";
 
 export function StatsDashboard({ members }: { members: Member[] }) {
-  const totalSelections = members.reduce((acc, m) => acc + m.count, 0);
-  const selectedCount = members.filter(m => m.count > 0).length;
+  const totalSelections = members.reduce((acc, m) => acc + m.selectionFrequency, 0);
+  const selectedCount = members.filter(m => m.selectionFrequency > 0).length;
   const participationRate = members.length > 0 
     ? Math.round((selectedCount / members.length) * 100) 
     : 0;

@@ -42,7 +42,7 @@ export function MemberCard({ member, isLowest, onSelect }: MemberCardProps) {
               "text-xs font-bold px-1.5 py-0.5 rounded",
               isLowest ? "bg-destructive/20 text-destructive" : "bg-muted text-foreground"
             )}>
-              {member.count}
+              {member.selectionFrequency}
             </span>
             {isLowest && (
               <Badge variant="destructive" className="text-[10px] h-4 uppercase px-1 priority-badge">

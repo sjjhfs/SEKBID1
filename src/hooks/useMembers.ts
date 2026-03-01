@@ -1,63 +1,63 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { ref, onValue, set, update, increment, runTransaction } from 'firebase/database';
-import { database } from '@/lib/firebase';
+import { useMemoFirebase, useCollection, useFirestore } from '@/firebase';
+import { collection, doc, writeBatch, increment } from 'firebase/firestore';
 import { Member } from '@/types/member';
+import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
+import { useEffect } from 'react';
+import { setDoc } from 'firebase/firestore';
 
 export function useMembers() {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(true);
+  const firestore = useFirestore();
 
+  const membersQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'members');
+  }, [firestore]);
+
+  const { data: members, isLoading: loading } = useCollection<Omit<Member, 'id'>>(membersQuery);
+
+  // Initialize data if empty (Seed logic)
   useEffect(() => {
-    const membersRef = ref(database, 'members');
-    
-    const unsubscribe = onValue(membersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        // Initialize if empty
-        const initialMap: Record<string, Member> = {};
-        INITIAL_MEMBERS.forEach(m => {
-          initialMap[m.id] = m;
+    if (!loading && (!members || members.length === 0) && firestore) {
+      const batch = writeBatch(firestore);
+      INITIAL_MEMBERS.forEach((m) => {
+        const docRef = doc(collection(firestore, 'members'), m.id);
+        batch.set(docRef, {
+          name: m.name,
+          type: m.category,
+          selectionFrequency: 0
         });
-        set(membersRef, initialMap);
-      } else {
-        const memberList = Object.values(data) as Member[];
-        setMembers(memberList);
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+      });
+      batch.commit().catch(console.error);
+    }
+  }, [loading, members, firestore]);
 
   const selectMember = async (id: string) => {
-    const memberRef = ref(database, `members/${id}`);
-    try {
-      await update(memberRef, {
-        count: increment(1)
-      });
-    } catch (error) {
-      console.error("Failed to select member:", error);
-    }
+    if (!firestore) return;
+    const memberRef = doc(firestore, 'members', id);
+    updateDocumentNonBlocking(memberRef, {
+      selectionFrequency: increment(1)
+    });
   };
 
   const resetAllData = async () => {
-    const membersRef = ref(database, 'members');
-    try {
-      await runTransaction(membersRef, (currentData) => {
-        if (currentData) {
-          Object.keys(currentData).forEach(key => {
-            currentData[key].count = 0;
-          });
-        }
-        return currentData;
-      });
-    } catch (error) {
-      console.error("Failed to reset data:", error);
-    }
+    if (!firestore || !members) return;
+    const batch = writeBatch(firestore);
+    members.forEach((m) => {
+      const docRef = doc(firestore, 'members', m.id);
+      batch.update(docRef, { selectionFrequency: 0 });
+    });
+    // We don't await the batch for immediate UI response, though batches don't have a non-blocking helper yet
+    // we use the standard promise and handle errors silently or via standard Firebase behavior
+    batch.commit().catch(console.error);
   };
 
-  return { members, loading, selectMember, resetAllData };
+  return { 
+    members: (members || []) as Member[], 
+    loading, 
+    selectMember, 
+    resetAllData 
+  };
 }
