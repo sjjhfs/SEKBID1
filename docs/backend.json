@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "Member": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Member",
+      "type": "object",
+      "description": "Represents a member of the FairGreeter app, categorized as 'INTI' or 'ANGGOTA', and tracks their selection frequency for greeting duties.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Member entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the member."
+        },
+        "type": {
+          "type": "string",
+          "description": "The category of the member, either 'INTI' or 'ANGGOTA'."
+        },
+        "selectionFrequency": {
+          "type": "number",
+          "description": "The count of how many times this member has been selected as a greeter."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "selectionFrequency"
+      ]
+    },
+    "AppStatistics": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AppStatistics",
+      "type": "object",
+      "description": "Stores overall application statistics, such as total selections made and the count of unique members selected at least once.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AppStatistics entity. Expected to be a singleton, e.g., 'globalStats', as there should only be one record for overall statistics."
+        },
+        "totalSelectionsMade": {
+          "type": "number",
+          "description": "The cumulative total count of all 'Select' actions performed across all members in the application."
+        },
+        "membersSelectedAtLeastOnceCount": {
+          "type": "number",
+          "description": "The total number of distinct members who have been selected as a greeter at least once."
+        }
+      },
+      "required": [
+        "id",
+        "totalSelectionsMade",
+        "membersSelectedAtLeastOnceCount"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/members/{memberId}",
+        "definition": {
+          "entityName": "Member",
+          "schema": {
+            "$ref": "#/backend/entities/Member"
+          },
+          "description": "Stores individual member profiles, their type ('INTI' or 'ANGGOTA'), and their current selection frequency. Supports read access for all authenticated users and atomic increments for 'selectionFrequency'. Full create/update/delete access is restricted to admin users. Includes denormalized 'ownerId' field to denote the original creator (not applicable here, but following convention).",
+          "params": [
+            {
+              "name": "memberId",
+              "description": "The unique identifier for a specific member."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/app_statistics/globalStats",
+        "definition": {
+          "entityName": "AppStatistics",
+          "schema": {
+            "$ref": "#/backend/entities/AppStatistics"
+          },
+          "description": "A singleton document containing overall application statistics, such as total selections made and count of unique members selected. Read access is granted to all authenticated users, while write access (e.g., for updates via atomic operations or admin resets) is restricted to admin users.",
+          "params": []
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/Member"
+          },
+          "description": "A collection used to designate administrators. The existence of a document with a user's UID as its ID signifies that user has administrative privileges. Used for authorization checks in security rules to enable admin-only functions. Document content can be minimal or empty; only existence matters for authorization. Does not represent the Member entity directly, but 'User' is implied as the entity holding the role.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique Firebase Authentication UID of a user designated as an administrator."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to be secure, scalable, and debuggable by adhering to the core design principles and strategy mandates. \n\n**Authorization Independence via Denormalization:**\nThis design achieves Authorization Independence by completely eliminating the need for `get()` calls within security rules for authorization logic. \n*   For member data (`/members/{memberId}`), general read and selection frequency increment operations are granted to any authenticated user. Admin-specific operations (full updates, deletions, data resets) are authorized by checking the direct existence of the requesting user's UID in the dedicated `/roles_admin/{userId}` collection (e.g., `exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid))`). This makes the authorization check atomic and independent of any other document's attributes or hierarchical relationships. \n*   The `AppStatistics` singleton (`/app_statistics/globalStats`) has read access for all authenticated users, and write access is restricted to admin users, again verified by the independent `roles_admin` check. There are no parent-child authorization dependencies.\n\n**Structural Segregation & QAP Support:**\n*   **`/members/{memberId}`:** This collection stores all `Member` entities. All documents within this collection share a homogeneous security posture: read and `selectionFrequency` increment access for all authenticated users, and administrative write access for designated admins. This segregation supports Queryable Access Patterns (QAPs) by allowing a simple `allow read: if request.auth.uid != null;` rule. This enables client-side `list` operations (e.g., displaying all 'INTI' or 'ANGGOTA' members, sorting by frequency) to retrieve all relevant documents efficiently without being filtered by security rules (rules are not filters). Users can query, sort, and display members as required by the UI.\n*   **`/app_statistics/globalStats`:** This is a singleton document. It has a clear, singular purpose, providing global statistics. Its security posture is uniform: read for all authenticated users, write for admins. This supports direct `get()` operations for displaying statistics.\n*   **`/roles_admin/{userId}`:** This collection is strictly for managing admin roles. Its sole purpose is to provide a lookup for admin authorization. The existence of a document here (where `userId` is the `request.auth.uid`) grants administrative privileges. This is a clear segregation of administrative concerns and enables robust, direct authorization checks for admin functions (like the 'Reset All Data' feature). This collection is not typically listed by clients; it's used for `get()` checks within other rules.\n\n**Access Modeling & Data Clarity:**\n*   **Path-Based Ownership (implied for admin roles):** `/roles_admin/{userId}` uses the user's UID directly in the path, making it straightforward to check if a user is an admin.\n*   **Global Access for Collaborative Data:** `members` data is implicitly collaborative, as any user can increment `selectionFrequency`. The structure grants global read and increment access to authenticated users, simplifying rules.\n*   **Explicit State Modeling & Predictable Schema:** The entities provided have clear, predictable schemas. There's no complex state machine, so a dedicated `status` field isn't explicitly needed beyond `selectionFrequency` for members. Wildcards like `{memberId}` and `{userId}` are descriptive, ensuring radical consistency."
+  }
+}

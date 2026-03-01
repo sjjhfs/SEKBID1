@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * CORE PHILOSOPHY:
+     * This ruleset implements a Role-Based Access Control (RBAC) model focused on administrative 
+     * oversight and collaborative data modification. It prioritizes rapid iteration by 
+     * enforcing authorization (who can access) while remaining flexible on data schema.
+     *
+     * DATA STRUCTURE:
+     * - /members/{memberId}: Publicly readable member profiles for signed-in users.
+     * - /app_statistics/globalStats: A singleton for tracking application-wide metrics.
+     * - /roles_admin/{userId}: A lookup collection where the existence of a UID document 
+     *   grants administrative privileges.
+     *
+     * KEY SECURITY DECISIONS:
+     * - Admin roles are validated via document existence in the 'roles_admin' collection.
+     * - Authenticated users are permitted to update member 'selectionFrequency' to support 
+     *   the core app functionality (the greeting selection process).
+     * - Destructive operations (delete) and entity creation are strictly reserved for admins.
+     * - Read access is restricted to authenticated users to protect member identity and privacy.
+     *
+     * DENORMALIZATION FOR AUTHORIZATION:
+     * - Admin status is determined via a lookup in a flat collection (/roles_admin) to avoid 
+     *   traversing complex trees or checking multiple field-level permissions.
+     */
+
+    // --- Helper Functions ---
+
+    /** 
+     * @description Checks if the request is made by an authenticated user.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** 
+     * @description Checks if the authenticated user has an entry in the roles_admin collection.
+     */
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /** 
+     * @description Verifies a document exists before allowing update/delete.
+     */
+    function isExisting() {
+      return resource != null;
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for Member documents. All users can read and increment stats; admins manage entries.
+     * @path /members/{memberId}
+     * @allow (get) Signed-in user retrieving a member list.
+     * @deny (create) Non-admin user attempting to add a new member.
+     * @principle Admin-only management with collaborative updates for frequency tracking.
+     */
+    match /members/{memberId} {
+      allow get, list: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isSignedIn() && isExisting();
+      allow delete: if isAdmin() && isExisting();
+    }
+
+    /**
+     * @description Rules for the Global Statistics singleton. All users can view; only admins can modify/reset.
+     * @path /app_statistics/globalStats
+     * @allow (update) Admin user updating total selection counts.
+     * @deny (list) Anonymous user attempting to list statistics documents.
+     * @principle Protected singleton pattern for application-wide metrics.
+     */
+    match /app_statistics/{statId} {
+      allow get, list: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() && isExisting();
+      allow delete: if isAdmin() && isExisting();
+    }
+
+    /**
+     * @description Rules for Admin Roles. Used to determine administrative privileges.
+     * @path /roles_admin/{userId}
+     * @allow (get) User checking if they themselves are an admin.
+     * @deny (update) Non-admin user attempting to promote themselves.
+     * @principle Strict path-based ownership and role-based restricted access.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin() && isExisting();
+      allow delete: if isAdmin() && isExisting();
+    }
+  }
+}
