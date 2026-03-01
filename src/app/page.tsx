@@ -52,19 +52,17 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
+      <SidebarTrigger />
       <SidebarInset>
         <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
-          <main className="w-full flex flex-col items-center sm:items-start max-w-6xl mx-auto sm:mx-0">
-            <header className="flex flex-col mb-12 w-full items-center sm:items-start text-center sm:text-left">
+          <main className="w-full flex flex-col items-start max-w-6xl mx-auto sm:mx-0">
+            <header className="flex flex-col mb-12 w-full items-start text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
-                <div className="flex items-center gap-4 justify-center sm:justify-start">
-                  <SidebarTrigger className="mt-1 shrink-0" />
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle shrink-0" />
-                    <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle shrink-0" />
+                  <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
                 </div>
-                <div className="flex justify-center sm:justify-end">
+                <div className="flex justify-start">
                   <AdminPanel 
                     onReset={resetAllData} 
                     onDeleteAll={deleteAllMembers}
@@ -93,15 +91,15 @@ export default function Home() {
               </div>
             ) : (
               <div className="w-full">
-                <div className="mb-12 flex justify-center sm:justify-start">
+                <div className="mb-12 flex justify-start">
                   <div className="w-full max-w-2xl sm:max-w-full">
                     <StatsDashboard members={members} alignment="left" />
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-center sm:justify-start">
+                <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-start">
                   {/* INTI Section */}
-                  <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="inti">
+                  <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -112,7 +110,7 @@ export default function Home() {
                       </span>
                     </div>
                     {intiMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
+                      <p className="text-sm text-muted-foreground italic text-left py-4">No members in this category.</p>
                     ) : (
                       <div className="grid gap-3 w-full">
                         {intiMembers.map((member) => (
@@ -129,7 +127,7 @@ export default function Home() {
                   </section>
 
                   {/* ANGGOTA Section */}
-                  <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="anggota">
+                  <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="anggota">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -140,7 +138,7 @@ export default function Home() {
                       </span>
                     </div>
                     {anggotaMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
+                      <p className="text-sm text-muted-foreground italic text-left py-4">No members in this category.</p>
                     ) : (
                       <div className="grid gap-3 w-full">
                         {anggotaMembers.map((member) => (
@@ -157,7 +155,7 @@ export default function Home() {
                   </section>
 
                   {/* TERBATAS Section */}
-                  <section className="scroll-mt-20 flex flex-col items-center w-full max-w-[500px]" id="terbatas">
+                  <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                         <UsersRound className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -168,7 +166,7 @@ export default function Home() {
                       </span>
                     </div>
                     {terbatasMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
+                      <p className="text-sm text-muted-foreground italic text-left py-4">No members in this category.</p>
                     ) : (
                       <div className="grid gap-3 w-full">
                         {terbatasMembers.map((member) => (
@@ -187,7 +185,7 @@ export default function Home() {
               </div>
             )}
 
-            <footer className="mt-24 text-center text-sm text-muted-foreground border-t border-border pt-8 w-full max-w-full">
+            <footer className="mt-24 text-left text-sm text-muted-foreground border-t border-border pt-8 w-full max-w-full">
               <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
             </footer>
           </main>
