@@ -2,11 +2,12 @@ import { Member } from "@/types/member";
 
 export const INITIAL_MEMBERS: Member[] = [
   // INTI Members
-  { id: 'inti-1', name: 'Ahmad Faisal', type: 'INTI', selectionFrequency: 0 },
-  { id: 'inti-2', name: 'Budi Santoso', type: 'INTI', selectionFrequency: 0 },
-  { id: 'inti-3', name: 'Citra Dewi', type: 'INTI', selectionFrequency: 0 },
-  { id: 'inti-4', name: 'Dedi Kurniawan', type: 'INTI', selectionFrequency: 0 },
-  { id: 'inti-5', name: 'Eka Putri', type: 'INTI', selectionFrequency: 0 },
+  { id: 'inti-1', name: 'Juan', type: 'INTI', selectionFrequency: 0 },
+  { id: 'inti-2', name: 'Gideon', type: 'INTI', selectionFrequency: 0 },
+  { id: 'inti-3', name: 'Celine', type: 'INTI', selectionFrequency: 0 },
+  { id: 'inti-4', name: 'Audrey', type: 'INTI', selectionFrequency: 0 },
+  { id: 'inti-5', name: 'Andreia', type: 'INTI', selectionFrequency: 0 },
+  { id: 'inti-6', name: 'Amanda', type: 'INTI', selectionFrequency: 0 },
   
   // ANGGOTA Members
   { id: 'ang-1', name: 'Farhan Azis', type: 'ANGGOTA', selectionFrequency: 0 },
