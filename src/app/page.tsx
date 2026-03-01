@@ -53,8 +53,8 @@ export default function Home() {
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-8">
-          <main className="max-w-4xl">
+        <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
+          <main className="w-full">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
@@ -95,89 +95,91 @@ export default function Home() {
               <>
                 <StatsDashboard members={members} />
 
-                {/* INTI Section */}
-                <section className="mb-12 scroll-mt-20" id="inti">
-                  <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
-                    <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
-                      <UserPlus className="w-6 h-6" />
-                      INTI
-                    </h2>
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
-                      {intiMembers.length}
-                    </span>
-                  </div>
-                  {intiMembers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
-                  ) : (
-                    <div className="grid gap-3">
-                      {intiMembers.map((member) => (
-                        <MemberCard
-                          key={member.id}
-                          member={member}
-                          isLowest={member.selectionFrequency === minInti}
-                          onSelect={selectMember}
-                          isAdminMode={isAdminMode}
-                        />
-                      ))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                  {/* INTI Section */}
+                  <section className="scroll-mt-20" id="inti">
+                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
+                      <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
+                        <UserPlus className="w-6 h-6" />
+                        INTI
+                      </h2>
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
+                        {intiMembers.length}
+                      </span>
                     </div>
-                  )}
-                </section>
+                    {intiMembers.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
+                    ) : (
+                      <div className="grid gap-3">
+                        {intiMembers.map((member) => (
+                          <MemberCard
+                            key={member.id}
+                            member={member}
+                            isLowest={member.selectionFrequency === minInti}
+                            onSelect={selectMember}
+                            isAdminMode={isAdminMode}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </section>
 
-                {/* ANGGOTA Section */}
-                <section className="mb-12 scroll-mt-20" id="anggota">
-                  <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
-                    <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
-                      <UserPlus className="w-6 h-6" />
-                      ANGGOTA
-                    </h2>
-                    <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">
-                      {anggotaMembers.length}
-                    </span>
-                  </div>
-                  {anggotaMembers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
-                  ) : (
-                    <div className="grid gap-3">
-                      {anggotaMembers.map((member) => (
-                        <MemberCard
-                          key={member.id}
-                          member={member}
-                          isLowest={member.selectionFrequency === minAnggota}
-                          onSelect={selectMember}
-                          isAdminMode={isAdminMode}
-                        />
-                      ))}
+                  {/* ANGGOTA Section */}
+                  <section className="scroll-mt-20" id="anggota">
+                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
+                      <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
+                        <UserPlus className="w-6 h-6" />
+                        ANGGOTA
+                      </h2>
+                      <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">
+                        {anggotaMembers.length}
+                      </span>
                     </div>
-                  )}
-                </section>
+                    {anggotaMembers.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
+                    ) : (
+                      <div className="grid gap-3">
+                        {anggotaMembers.map((member) => (
+                          <MemberCard
+                            key={member.id}
+                            member={member}
+                            isLowest={member.selectionFrequency === minAnggota}
+                            onSelect={selectMember}
+                            isAdminMode={isAdminMode}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </section>
 
-                {/* TERBATAS Section */}
-                <section className="scroll-mt-20" id="terbatas">
-                  <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
-                    <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
-                      <UsersRound className="w-6 h-6" />
-                      TERBATAS
-                    </h2>
-                    <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">
-                      {terbatasMembers.length}
-                    </span>
-                  </div>
-                  {terbatasMembers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
-                  ) : (
-                    <div className="grid gap-3">
-                      {terbatasMembers.map((member) => (
-                        <MemberCard
-                          key={member.id}
-                          member={member}
-                          isLowest={member.selectionFrequency === minTerbatas}
-                          onSelect={selectMember}
-                          isAdminMode={isAdminMode}
-                        />
-                      ))}
+                  {/* TERBATAS Section */}
+                  <section className="scroll-mt-20 lg:col-span-2 xl:col-span-1" id="terbatas">
+                    <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
+                      <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
+                        <UsersRound className="w-6 h-6" />
+                        TERBATAS
+                      </h2>
+                      <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">
+                        {terbatasMembers.length}
+                      </span>
                     </div>
-                  )}
-                </section>
+                    {terbatasMembers.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic text-center py-4">No members in this category.</p>
+                    ) : (
+                      <div className="grid gap-3">
+                        {terbatasMembers.map((member) => (
+                          <MemberCard
+                            key={member.id}
+                            member={member}
+                            isLowest={member.selectionFrequency === minTerbatas}
+                            onSelect={selectMember}
+                            isAdminMode={isAdminMode}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                </div>
               </>
             )}
 
