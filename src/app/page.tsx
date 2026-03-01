@@ -21,6 +21,7 @@ export default function Home() {
     }
   }, [user, isUserLoading, auth]);
 
+  // Group members and sort by frequency
   const intiMembers = members
     .filter(m => m.type === 'INTI')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
@@ -33,8 +34,10 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
+  // Calculate local priority (min frequency) for each section
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
+  const minTerbatas = terbatasMembers.length > 0 ? Math.min(...terbatasMembers.map(m => m.selectionFrequency)) : 0;
 
   if (isUserLoading) {
     return (
@@ -152,7 +155,7 @@ export default function Home() {
               <MemberCard
                 key={member.id}
                 member={member}
-                isLowest={false} // TERBATAS members are excluded from priority
+                isLowest={member.selectionFrequency === minTerbatas}
                 onSelect={selectMember}
                 isAdminMode={isAdminMode}
               />

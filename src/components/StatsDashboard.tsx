@@ -9,7 +9,7 @@ export function StatsDashboard({ members }: { members: Member[] }) {
   const totalSelection = members.reduce((acc, m) => acc + m.selectionFrequency, 0);
   
   // Find members with the minimum frequency to show as "Priority"
-  // Exclude 'TERBATAS' from priority calculations per user request
+  // Exclude 'TERBATAS' from the global priority gadget calculation
   const priorityEligibleMembers = members.filter(m => m.type !== 'TERBATAS');
   const minFreq = priorityEligibleMembers.length > 0 ? Math.min(...priorityEligibleMembers.map(m => m.selectionFrequency)) : 0;
   const priorityMembers = priorityEligibleMembers.filter(m => m.selectionFrequency === minFreq);
