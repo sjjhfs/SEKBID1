@@ -6,16 +6,18 @@ import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus, Sparkles, Loader2, UsersRound } from "lucide-react";
+import { UserPlus, Sparkles, Loader2, UsersRound, Search } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const { members, loading, selectMember, resetAllData, deleteAllMembers } = useMembers();
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (!isUserLoading && !user && auth) {
@@ -23,15 +25,19 @@ export default function Home() {
     }
   }, [user, isUserLoading, auth]);
 
-  const intiMembers = members
+  const filteredMembers = members.filter(m => 
+    m.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const intiMembers = filteredMembers
     .filter(m => m.type === 'INTI')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
-  const anggotaMembers = members
+  const anggotaMembers = filteredMembers
     .filter(m => m.type === 'ANGGOTA')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
-  const terbatasMembers = members
+  const terbatasMembers = filteredMembers
     .filter(m => m.type === 'TERBATAS')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
@@ -97,6 +103,18 @@ export default function Home() {
                   </div>
                 </div>
 
+                <div className="w-full flex justify-end mb-8">
+                  <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search members..."
+                      className="pl-9 bg-card border-border/50 focus:ring-primary/50"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                </div>
+
                 <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-start">
                   <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
@@ -109,7 +127,9 @@ export default function Home() {
                       </span>
                     </div>
                     {intiMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-left py-4">No members in this category.</p>
+                      <p className="text-sm text-muted-foreground italic text-left py-4">
+                        {searchTerm ? "No matches found." : "No members in this category."}
+                      </p>
                     ) : (
                       <div className="grid gap-3 w-full">
                         {intiMembers.map((member) => (
@@ -136,7 +156,9 @@ export default function Home() {
                       </span>
                     </div>
                     {anggotaMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-left py-4">No members in this category.</p>
+                      <p className="text-sm text-muted-foreground italic text-left py-4">
+                        {searchTerm ? "No matches found." : "No members in this category."}
+                      </p>
                     ) : (
                       <div className="grid gap-3 w-full">
                         {anggotaMembers.map((member) => (
@@ -163,7 +185,9 @@ export default function Home() {
                       </span>
                     </div>
                     {terbatasMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-left py-4">No members in this category.</p>
+                      <p className="text-sm text-muted-foreground italic text-left py-4">
+                        {searchTerm ? "No matches found." : "No members in this category."}
+                      </p>
                     ) : (
                       <div className="grid gap-3 w-full">
                         {terbatasMembers.map((member) => (
