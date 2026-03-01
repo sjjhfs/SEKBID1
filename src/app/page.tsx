@@ -8,6 +8,8 @@ import { AdminPanel } from "@/components/AdminPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus, Sparkles, Loader2, UsersRound } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Home() {
   const auth = useAuth();
@@ -47,139 +49,142 @@ export default function Home() {
     );
   }
 
-  if (loading && members.length === 0) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-12 space-y-8">
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-48" />
-          <Skeleton className="h-6 w-72" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-32" />
-          <div className="grid gap-3">
-            {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen pb-20 pt-10 px-4">
-      <main className="max-w-3xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
-              <h1 className="text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
-            </div>
-            <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
-              {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
-            </p>
-          </div>
-          <AdminPanel 
-            onReset={resetAllData} 
-            onDeleteAll={deleteAllMembers}
-            isAdminMode={isAdminMode} 
-            setIsAdminMode={setIsAdminMode} 
-          />
-        </header>
+    <div className="flex min-h-screen bg-background">
+      <AppSidebar />
+      <SidebarInset>
+        <div className="min-h-screen pb-20 pt-10 px-4">
+          <main className="max-w-3xl mx-auto">
+            <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+              <div className="flex-1 flex gap-4">
+                <SidebarTrigger className="-ml-2 mt-2" />
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle" />
+                    <h1 className="text-4xl font-extrabold tracking-tight uppercase">DOOR GREETER, SEKBID 1!</h1>
+                  </div>
+                  <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
+                    {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
+                  </p>
+                </div>
+              </div>
+              <AdminPanel 
+                onReset={resetAllData} 
+                onDeleteAll={deleteAllMembers}
+                isAdminMode={isAdminMode} 
+                setIsAdminMode={setIsAdminMode} 
+              />
+            </header>
 
-        <StatsDashboard members={members} />
+            {loading && members.length === 0 ? (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Skeleton className="h-24" />
+                  <Skeleton className="h-24" />
+                </div>
+                <div className="space-y-4">
+                  <Skeleton className="h-8 w-32" />
+                  <div className="grid gap-3">
+                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <StatsDashboard members={members} />
 
-        {/* INTI Section */}
-        <section className="mb-12">
-          <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
-            <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
-              <UserPlus className="w-6 h-6" />
-              INTI
-            </h2>
-            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
-              {intiMembers.length}
-            </span>
-          </div>
-          {intiMembers.length === 0 ? (
-            <p className="text-sm text-muted-foreground italic">No members in this category.</p>
-          ) : (
-            <div className="grid gap-3">
-              {intiMembers.map((member) => (
-                <MemberCard
-                  key={member.id}
-                  member={member}
-                  isLowest={member.selectionFrequency === minInti}
-                  onSelect={selectMember}
-                  isAdminMode={isAdminMode}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+                {/* INTI Section */}
+                <section className="mb-12 scroll-mt-20" id="inti">
+                  <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+                    <h2 className="text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
+                      <UserPlus className="w-6 h-6" />
+                      INTI
+                    </h2>
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
+                      {intiMembers.length}
+                    </span>
+                  </div>
+                  {intiMembers.length === 0 ? (
+                    <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+                  ) : (
+                    <div className="grid gap-3">
+                      {intiMembers.map((member) => (
+                        <MemberCard
+                          key={member.id}
+                          member={member}
+                          isLowest={member.selectionFrequency === minInti}
+                          onSelect={selectMember}
+                          isAdminMode={isAdminMode}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
 
-        {/* ANGGOTA Section */}
-        <section className="mb-12">
-          <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
-            <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
-              <UserPlus className="w-6 h-6" />
-              ANGGOTA
-            </h2>
-            <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">
-              {anggotaMembers.length}
-            </span>
-          </div>
-          {anggotaMembers.length === 0 ? (
-            <p className="text-sm text-muted-foreground italic">No members in this category.</p>
-          ) : (
-            <div className="grid gap-3">
-              {anggotaMembers.map((member) => (
-                <MemberCard
-                  key={member.id}
-                  member={member}
-                  isLowest={member.selectionFrequency === minAnggota}
-                  onSelect={selectMember}
-                  isAdminMode={isAdminMode}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+                {/* ANGGOTA Section */}
+                <section className="mb-12 scroll-mt-20" id="anggota">
+                  <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+                    <h2 className="text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
+                      <UserPlus className="w-6 h-6" />
+                      ANGGOTA
+                    </h2>
+                    <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">
+                      {anggotaMembers.length}
+                    </span>
+                  </div>
+                  {anggotaMembers.length === 0 ? (
+                    <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+                  ) : (
+                    <div className="grid gap-3">
+                      {anggotaMembers.map((member) => (
+                        <MemberCard
+                          key={member.id}
+                          member={member}
+                          isLowest={member.selectionFrequency === minAnggota}
+                          onSelect={selectMember}
+                          isAdminMode={isAdminMode}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
 
-        {/* TERBATAS Section */}
-        <section>
-          <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
-            <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
-              <UsersRound className="w-6 h-6" />
-              TERBATAS
-            </h2>
-            <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">
-              {terbatasMembers.length}
-            </span>
-          </div>
-          {terbatasMembers.length === 0 ? (
-            <p className="text-sm text-muted-foreground italic">No members in this category.</p>
-          ) : (
-            <div className="grid gap-3">
-              {terbatasMembers.map((member) => (
-                <MemberCard
-                  key={member.id}
-                  member={member}
-                  isLowest={member.selectionFrequency === minTerbatas}
-                  onSelect={selectMember}
-                  isAdminMode={isAdminMode}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+                {/* TERBATAS Section */}
+                <section className="scroll-mt-20" id="terbatas">
+                  <div className="flex items-center gap-2 mb-6 border-b border-border pb-2">
+                    <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
+                      <UsersRound className="w-6 h-6" />
+                      TERBATAS
+                    </h2>
+                    <span className="text-xs bg-priority/10 text-priority px-2 py-0.5 rounded-full font-bold">
+                      {terbatasMembers.length}
+                    </span>
+                  </div>
+                  {terbatasMembers.length === 0 ? (
+                    <p className="text-sm text-muted-foreground italic">No members in this category.</p>
+                  ) : (
+                    <div className="grid gap-3">
+                      {terbatasMembers.map((member) => (
+                        <MemberCard
+                          key={member.id}
+                          member={member}
+                          isLowest={member.selectionFrequency === minTerbatas}
+                          onSelect={selectMember}
+                          isAdminMode={isAdminMode}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
 
-        <footer className="mt-16 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
-        </footer>
-      </main>
+            <footer className="mt-16 text-center text-sm text-muted-foreground">
+              <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
+            </footer>
+          </main>
+        </div>
+      </SidebarInset>
     </div>
   );
 }

@@ -26,12 +26,25 @@
     --radius: 0.75rem;
     --priority: 0 100% 75%; /* #FF7F7F */
     --priority-light: 0 100% 90%; /* #FFCCCB */
+
+    /* Sidebar colors */
+    --sidebar-background: 240 5% 10%;
+    --sidebar-foreground: 240 5% 90%;
+    --sidebar-primary: 274 100% 26%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4% 16%;
+    --sidebar-accent-foreground: 240 5% 98%;
+    --sidebar-border: 240 4% 16%;
+    --sidebar-ring: 274 100% 26%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-background text-foreground font-body;
