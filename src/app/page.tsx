@@ -95,7 +95,7 @@ export default function Home() {
               <>
                 <StatsDashboard members={members} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* INTI Section */}
                   <section className="scroll-mt-20" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
@@ -153,7 +153,7 @@ export default function Home() {
                   </section>
 
                   {/* TERBATAS Section */}
-                  <section className="scroll-mt-20 lg:col-span-2 xl:col-span-1" id="terbatas">
+                  <section className="scroll-mt-20" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
                       <h2 className="text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                         <UsersRound className="w-6 h-6" />
