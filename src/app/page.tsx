@@ -65,7 +65,7 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-muted-foreground text-lg whitespace-pre-line leading-relaxed">
-                  {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
+                  {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu for bertanya\n\nSalam dari Ketua 2025/2026`}
                 </p>
               </div>
               <div className="shrink-0">
@@ -95,7 +95,7 @@ export default function Home() {
               <>
                 <StatsDashboard members={members} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {/* INTI Section */}
                   <section className="scroll-mt-20" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2">
