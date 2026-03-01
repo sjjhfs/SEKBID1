@@ -60,7 +60,7 @@ export function AdminPanel({ onReset, onDeleteAll, isAdminMode, setIsAdminMode }
 
   const handleDeleteAll = async () => {
     await onDeleteAll();
-    toast({ title: "Roster Cleared", description: "All members have been removed." });
+    toast({ title: "Members Cleared", description: "All members have been removed." });
     setDeleteDialogOpen(false);
   };
 
@@ -156,7 +156,7 @@ export function AdminPanel({ onReset, onDeleteAll, isAdminMode, setIsAdminMode }
         <DialogTrigger asChild>
           <Button variant="destructive" size="sm">
             <Users2 className="w-4 h-4 mr-2" />
-            Clear Roster
+            Clear Member
           </Button>
         </DialogTrigger>
         <DialogContent>
