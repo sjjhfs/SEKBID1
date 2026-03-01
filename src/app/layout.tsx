@@ -23,7 +23,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased selection:bg-primary/30 min-h-screen bg-background">
         <FirebaseClientProvider>
-          <SidebarProvider>
+          <SidebarProvider defaultOpen={false}>
             {children}
             <Toaster />
           </SidebarProvider>
