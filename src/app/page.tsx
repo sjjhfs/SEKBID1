@@ -23,7 +23,6 @@ export default function Home() {
     }
   }, [user, isUserLoading, auth]);
 
-  // Group members and sort by frequency
   const intiMembers = members
     .filter(m => m.type === 'INTI')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
@@ -36,7 +35,6 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
-  // Calculate local priority (min frequency) for each section
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
   const minTerbatas = terbatasMembers.length > 0 ? Math.min(...terbatasMembers.map(m => m.selectionFrequency)) : 0;
@@ -72,7 +70,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed max-w-2xl">
-                {`Sekbid 1 Haleluya!\nJika terdapat kebingungan jangan malu untuk bertanya\n\nSalam dari Ketua 2025/2026`}
+                Sekbid 1 Haleluya!
               </p>
             </header>
 
@@ -98,7 +96,6 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-start">
-                  {/* INTI Section */}
                   <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
@@ -126,7 +123,6 @@ export default function Home() {
                     )}
                   </section>
 
-                  {/* ANGGOTA Section */}
                   <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="anggota">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
@@ -154,7 +150,6 @@ export default function Home() {
                     )}
                   </section>
 
-                  {/* TERBATAS Section */}
                   <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
