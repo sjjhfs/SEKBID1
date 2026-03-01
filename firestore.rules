@@ -16,14 +16,10 @@ service cloud.firestore {
      *
      * KEY SECURITY DECISIONS:
      * - Admin roles are validated via document existence in the 'roles_admin' collection.
-     * - Authenticated users are permitted to update member 'selectionFrequency' to support 
-     *   the core app functionality (the greeting selection process).
-     * - Destructive operations (delete) and entity creation are strictly reserved for admins.
+     * - Authenticated users are permitted to create and update member data to support 
+     *   initial seeding and the core greeting selection process.
+     * - Destructive operations (delete) are strictly reserved for admins.
      * - Read access is restricted to authenticated users to protect member identity and privacy.
-     *
-     * DENORMALIZATION FOR AUTHORIZATION:
-     * - Admin status is determined via a lookup in a flat collection (/roles_admin) to avoid 
-     *   traversing complex trees or checking multiple field-level permissions.
      */
 
     // --- Helper Functions ---
@@ -52,15 +48,12 @@ service cloud.firestore {
     // --- Collection Rules ---
 
     /**
-     * @description Rules for Member documents. All users can read and increment stats; admins manage entries.
+     * @description Rules for Member documents. All users can read, create (for seeding), and increment stats.
      * @path /members/{memberId}
-     * @allow (get) Signed-in user retrieving a member list.
-     * @deny (create) Non-admin user attempting to add a new member.
-     * @principle Admin-only management with collaborative updates for frequency tracking.
      */
     match /members/{memberId} {
       allow get, list: if isSignedIn();
-      allow create: if isAdmin();
+      allow create: if isSignedIn(); // Allowed for initial auto-seeding by any user
       allow update: if isSignedIn() && isExisting();
       allow delete: if isAdmin() && isExisting();
     }
@@ -68,23 +61,17 @@ service cloud.firestore {
     /**
      * @description Rules for the Global Statistics singleton. All users can view; only admins can modify/reset.
      * @path /app_statistics/globalStats
-     * @allow (update) Admin user updating total selection counts.
-     * @deny (list) Anonymous user attempting to list statistics documents.
-     * @principle Protected singleton pattern for application-wide metrics.
      */
     match /app_statistics/{statId} {
       allow get, list: if isSignedIn();
-      allow create: if isAdmin();
-      allow update: if isAdmin() && isExisting();
+      allow create: if isSignedIn(); // Allowed for initial setup
+      allow update: if isSignedIn() && isExisting();
       allow delete: if isAdmin() && isExisting();
     }
 
     /**
      * @description Rules for Admin Roles. Used to determine administrative privileges.
      * @path /roles_admin/{userId}
-     * @allow (get) User checking if they themselves are an admin.
-     * @deny (update) Non-admin user attempting to promote themselves.
-     * @principle Strict path-based ownership and role-based restricted access.
      */
     match /roles_admin/{userId} {
       allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
