@@ -1,14 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMembers } from "@/hooks/useMembers";
 import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus, Sparkles } from "lucide-react";
+import { UserPlus, Sparkles, Loader2 } from "lucide-react";
+import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 
 export default function Home() {
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const { members, loading, selectMember, resetAllData } = useMembers();
+
+  // Automatically sign in anonymously if not already signed in
+  useEffect(() => {
+    if (!isUserLoading && !user && auth) {
+      initiateAnonymousSignIn(auth);
+    }
+  }, [user, isUserLoading, auth]);
 
   const intiMembers = members
     .filter(m => m.type === 'INTI')
@@ -20,6 +31,15 @@ export default function Home() {
 
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
+
+  // Show a simpler loading state while checking authentication
+  if (isUserLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (loading && members.length === 0) {
     return (
