@@ -37,6 +37,21 @@ export default function Home() {
   const [skippedSuggestions, setSkippedSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
 
+  // Load and validate bulk undo state from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('lastBulkSelection');
+    if (saved) {
+      const { ids, date } = JSON.parse(saved);
+      const today = new Date().toDateString();
+      // Only keep it if it was made today
+      if (date === today) {
+        setLastSelectedSuggested(ids);
+      } else {
+        localStorage.removeItem('lastBulkSelection');
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (!isUserLoading && !user && auth) {
       initiateAnonymousSignIn(auth);
@@ -82,11 +97,15 @@ export default function Home() {
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
-      // Use skipLog=true since we're creating a bulk log manually
+      
       ids.forEach(id => selectMember(id, true));
+      
       setLastSelectedSuggested(ids);
+      localStorage.setItem('lastBulkSelection', JSON.stringify({
+        ids,
+        date: new Date().toDateString()
+      }));
 
-      // Log bulk entry to history
       addSelectionLog(names);
 
       toast({ 
@@ -102,6 +121,7 @@ export default function Home() {
     if (lastSelectedSuggested.length === 0) return;
     lastSelectedSuggested.forEach(id => undoSelection(id));
     setLastSelectedSuggested([]);
+    localStorage.removeItem('lastBulkSelection');
     toast({ title: "Undo Successful", description: "Previous bulk selection has been reverted." });
   };
 
@@ -167,7 +187,7 @@ export default function Home() {
             ) : (
               <div className="w-full">
                 {allSuggested.length > 0 && !searchTerm && (
-                  <section className="mb-12 w-full max-w-[800px] animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50">
+                  <section id="suggestions" className="mb-12 w-full max-w-[800px] animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50 scroll-mt-24">
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-2">
                         <Lightbulb className="w-5 h-5 text-yellow-400" />
@@ -344,7 +364,9 @@ export default function Home() {
                   </section>
                 </div>
 
-                <SelectionHistory logs={selectionHistory as any[]} />
+                <div id="history" className="scroll-mt-24">
+                  <SelectionHistory logs={selectionHistory as any[]} />
+                </div>
               </div>
             )}
 

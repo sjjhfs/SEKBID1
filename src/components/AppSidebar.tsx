@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -11,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight } from "lucide-react";
+import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb } from "lucide-react";
 
 export function AppSidebar() {
   return (
@@ -48,6 +49,28 @@ export function AppSidebar() {
           <SidebarGroupLabel>Shortcuts</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Suggestions">
+                  <a href="#suggestions" className="flex items-center justify-between group/item">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4 text-yellow-400" />
+                      <span>Suggestions</span>
+                    </div>
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="History">
+                  <a href="#history" className="flex items-center justify-between group/item">
+                    <div className="flex items-center gap-2">
+                      <History className="w-4 h-4 text-muted-foreground" />
+                      <span>History</span>
+                    </div>
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="INTI Category">
                   <a href="#inti" className="flex items-center justify-between group/item">
