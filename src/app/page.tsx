@@ -58,7 +58,7 @@ export default function Home() {
   const handleCopySuggestions = () => {
     if (allSuggested.length === 0) return;
     
-    // Format exactly as requested: bulleted list of names only
+    // Format: bulleted list of names only
     const text = allSuggested.map(m => `• ${m.name}`).join('\n');
     
     navigator.clipboard.writeText(text).then(() => {
@@ -120,54 +120,54 @@ export default function Home() {
               </div>
             ) : (
               <div className="w-full">
-                {/* Suggestions Section */}
+                {/* Suggestions Section - Now more compact */}
                 {allSuggested.length > 0 && !searchTerm && (
-                  <section className="mb-16 w-full max-w-[1000px] animate-in fade-in slide-in-from-top-4 duration-700">
-                    <div className="flex items-center justify-between mb-6 border-b border-primary/20 pb-4">
+                  <section className="mb-12 w-full max-w-[800px] animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50">
+                    <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-2">
-                        <Lightbulb className="w-6 h-6 text-yellow-400 fill-yellow-400/20" />
-                        <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-tight">Suggested for Today</h2>
+                        <Lightbulb className="w-5 h-5 text-yellow-400" />
+                        <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight">Suggested for Today</h2>
                       </div>
                       <Button 
                         variant="outline" 
                         size="sm" 
                         onClick={handleCopySuggestions}
-                        className="h-9 px-4 hover:bg-primary/10 border-primary/30"
+                        className="h-8 px-3 text-xs border-primary/20 hover:bg-primary/5"
                       >
                         {copied ? (
-                          <CheckCircle2 className="w-4 h-4 mr-2 text-green-500" />
+                          <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-500" />
                         ) : (
-                          <Copy className="w-4 h-4 mr-2" />
+                          <Copy className="w-3.5 h-3.5 mr-1.5" />
                         )}
                         {copied ? "Copied" : "Copy List"}
                       </Button>
                     </div>
                     
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold uppercase text-primary tracking-widest px-1">INTI (Top 2)</p>
-                        <div className="grid gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-bold uppercase text-primary tracking-[0.2em] px-1">INTI (Top 2)</p>
+                        <div className="grid gap-2">
                           {suggestedInti.map(member => (
                             <MemberCard
                               key={`suggested-${member.id}`}
                               member={member}
                               isLowest={true}
-                              onSelect={selectMember}
-                              isAdminMode={isAdminMode}
+                              isAdminMode={false}
+                              hideSelect={true}
                             />
                           ))}
                         </div>
                       </div>
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold uppercase text-accent tracking-widest px-1">ANGGOTA (Top 6)</p>
-                        <div className="grid gap-3">
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-bold uppercase text-accent tracking-[0.2em] px-1">ANGGOTA (Top 6)</p>
+                        <div className="grid gap-2">
                           {suggestedAnggota.map(member => (
                             <MemberCard
                               key={`suggested-${member.id}`}
                               member={member}
                               isLowest={true}
-                              onSelect={selectMember}
-                              isAdminMode={isAdminMode}
+                              isAdminMode={false}
+                              hideSelect={true}
                             />
                           ))}
                         </div>

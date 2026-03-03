@@ -21,11 +21,12 @@ import { useToast } from "@/hooks/use-toast";
 interface MemberCardProps {
   member: Member;
   isLowest: boolean;
-  onSelect: (id: string) => Promise<void>;
+  onSelect?: (id: string) => Promise<void>;
   isAdminMode: boolean;
+  hideSelect?: boolean;
 }
 
-export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCardProps) {
+export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect = false }: MemberCardProps) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState(member.name);
@@ -37,6 +38,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleSelect = async () => {
+    if (!onSelect) return;
     setIsSelecting(true);
     await onSelect(member.id);
     setTimeout(() => setIsSelecting(false), 800);
@@ -65,8 +67,9 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
     toast({ variant: "destructive", title: "Deleted", description: "Member removed." });
   };
 
-  // Long press logic
+  // Long press logic - only for non-suggested cards
   const startLongPress = () => {
+    if (hideSelect) return;
     longPressTimer.current = setTimeout(() => {
       setShowUndoFrame(true);
     }, 1000); // 1 second
@@ -90,22 +93,24 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
       className={cn(
         "member-row-frame group relative",
         isLowest && !isTerbatas && "priority-highlight border-destructive/30",
-        isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30"
+        isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30",
+        hideSelect && "h-12 sm:h-12 border-dashed bg-card/40"
       )}
+      style={hideSelect ? { gridTemplateColumns: '32px 1fr 45px', gap: '0.5rem' } : undefined}
     >
       {/* Undo Frame Overlay */}
-      {showUndoFrame && (
+      {!hideSelect && showUndoFrame && (
         <div className="absolute inset-0 z-10 bg-background/95 flex items-center justify-between px-4 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-center gap-2">
             <RotateCcw className="w-4 h-4 text-primary" />
-            <span className="text-sm font-bold">Undo selection for {member.name}?</span>
+            <span className="text-sm font-bold">Undo for {member.name}?</span>
           </div>
           <div className="flex gap-2">
             <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setShowUndoFrame(false)}>
               <X className="w-4 h-4" />
             </Button>
             <Button size="sm" variant="destructive" className="h-8" onClick={handleUndo}>
-              Confirm Undo
+              Undo
             </Button>
           </div>
         </div>
@@ -113,18 +118,19 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
 
       {/* COLUMN 1: Avatar */}
       <div className={cn(
-        "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0",
+        "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
         isLowest 
           ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-          : "bg-primary/10 text-primary"
+          : "bg-primary/10 text-primary",
+        hideSelect && "w-6 h-6"
       )}>
-        <UserCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
+        <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-4 h-4")} />
       </div>
 
       {/* COLUMN 2: Name & Admin Controls */}
       <div className="flex items-center gap-1 min-w-0 overflow-hidden">
-        <h4 className="font-semibold text-sm sm:text-base truncate">{member.name}</h4>
-        {isAdminMode && (
+        <h4 className={cn("font-semibold text-sm truncate", !hideSelect && "sm:text-base")}>{member.name}</h4>
+        {isAdminMode && !hideSelect && (
           <Dialog open={editOpen} onOpenChange={(open) => {
             setEditOpen(open);
             if (open) setEditName(member.name);
@@ -177,7 +183,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
       {/* COLUMN 3: Frequency */}
       <div className="text-center shrink-0">
         <span className={cn(
-          "text-xs sm:text-sm font-bold px-1.5 py-0.5 rounded tabular-nums",
+          "text-xs font-bold px-1.5 py-0.5 rounded tabular-nums",
           isLowest 
             ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
             : "bg-muted text-foreground"
@@ -186,44 +192,46 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode }: MemberCa
         </span>
       </div>
 
-      {/* COLUMN 4: Priority Badge */}
-      <div className="flex justify-center shrink-0">
-        {isLowest && (
-          <Badge 
-            className={cn(
-              "text-[9px] sm:text-[10px] h-4 uppercase px-1 leading-none font-bold",
-              isTerbatas ? "terbatas-priority-badge" : "priority-badge"
+      {/* COLUMN 4 & 5: Hidden in mini mode */}
+      {!hideSelect && (
+        <>
+          <div className="flex justify-center shrink-0">
+            {isLowest && (
+              <Badge 
+                className={cn(
+                  "text-[9px] sm:text-[10px] h-4 uppercase px-1 leading-none font-bold",
+                  isTerbatas ? "terbatas-priority-badge" : "priority-badge"
+                )}
+              >
+                Prio
+              </Badge>
             )}
-          >
-            Prio
-          </Badge>
-        )}
-      </div>
-
-      {/* COLUMN 5: Select Button */}
-      <div className="flex justify-end">
-        <Button
-          onClick={handleSelect}
-          disabled={isSelecting}
-          size="sm"
-          className={cn(
-            "h-8 sm:h-10 w-full relative overflow-hidden transition-all duration-300",
-            isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
-          )}
-        >
-          <span className={cn(
-            "text-xs sm:text-sm font-bold",
-            isSelecting ? "scale-0 opacity-0" : "scale-100 opacity-100"
-          )}>
-            Select
-          </span>
-          {isSelecting && (
-            <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in-50">
-              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-            </div>
-          )}
-        </Button>
-      </div>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              onClick={handleSelect}
+              disabled={isSelecting}
+              size="sm"
+              className={cn(
+                "h-8 sm:h-10 w-full relative overflow-hidden transition-all duration-300",
+                isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
+              )}
+            >
+              <span className={cn(
+                "text-xs sm:text-sm font-bold",
+                isSelecting ? "scale-0 opacity-0" : "scale-100 opacity-100"
+              )}>
+                Select
+              </span>
+              {isSelecting && (
+                <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in-50">
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
+              )}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
