@@ -21,6 +21,7 @@ export default function Home() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [copied, setCopied] = useState(false);
+  // This state is not persisted in localStorage, so it resets on reload as requested.
   const [lastSelectedSuggested, setLastSelectedSuggested] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -145,23 +146,12 @@ export default function Home() {
                 {/* Suggestions Section */}
                 {allSuggested.length > 0 && !searchTerm && (
                   <section className="mb-12 w-full max-w-[800px] animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-2">
                         <Lightbulb className="w-5 h-5 text-yellow-400" />
                         <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight">Suggested for Today</h2>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {lastSelectedSuggested.length > 0 && (
-                          <Button 
-                            variant="destructive" 
-                            size="sm" 
-                            onClick={handleUndoBulk}
-                            className="h-8 px-3 text-xs"
-                          >
-                            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-                            Undo Bulk
-                          </Button>
-                        )}
+                      <div className="flex flex-col items-end gap-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
@@ -175,6 +165,17 @@ export default function Home() {
                           )}
                           {copied ? "Copied" : "Copy List"}
                         </Button>
+                        {lastSelectedSuggested.length > 0 && (
+                          <Button 
+                            variant="destructive" 
+                            size="sm" 
+                            onClick={handleUndoBulk}
+                            className="h-8 px-3 text-xs animate-in slide-in-from-top-1 duration-200"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                            Undo Bulk
+                          </Button>
+                        )}
                       </div>
                     </div>
                     
