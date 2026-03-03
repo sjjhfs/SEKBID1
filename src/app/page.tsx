@@ -27,7 +27,8 @@ export default function Home() {
     resetAllData, 
     deleteAllMembers,
     selectionHistory,
-    addSelectionLog
+    addSelectionLog,
+    deleteSelectionLog
   } = useMembers();
   
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -365,7 +366,11 @@ export default function Home() {
                 </div>
 
                 <div id="history" className="scroll-mt-24">
-                  <SelectionHistory logs={selectionHistory as any[]} />
+                  <SelectionHistory 
+                    logs={selectionHistory as any[]} 
+                    isAdminMode={isAdminMode}
+                    onDelete={deleteSelectionLog}
+                  />
                 </div>
               </div>
             )}

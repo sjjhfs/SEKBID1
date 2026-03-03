@@ -72,6 +72,12 @@ export function useMembers() {
     }, { merge: true });
   };
 
+  const deleteSelectionLog = async (logId: string) => {
+    if (!firestore) return;
+    const logRef = doc(firestore, 'selection_history', logId);
+    deleteDocumentNonBlocking(logRef);
+  };
+
   const selectMember = async (id: string, skipLog: boolean = false) => {
     if (!firestore) return;
     const memberRef = doc(firestore, 'members', id);
@@ -190,6 +196,7 @@ export function useMembers() {
     deleteMember,
     deleteAllMembers,
     resetAllData,
-    addSelectionLog
+    addSelectionLog,
+    deleteSelectionLog
   };
 }

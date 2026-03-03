@@ -2,9 +2,10 @@
 "use client";
 
 import { format } from "date-fns";
-import { History as HistoryIcon, Calendar, UserCheck, Clock } from "lucide-react";
+import { History as HistoryIcon, Calendar, UserCheck, Clock, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface SelectionLog {
@@ -15,9 +16,11 @@ interface SelectionLog {
 
 interface SelectionHistoryProps {
   logs: SelectionLog[];
+  isAdminMode?: boolean;
+  onDelete?: (id: string) => Promise<void>;
 }
 
-export function SelectionHistory({ logs }: SelectionHistoryProps) {
+export function SelectionHistory({ logs, isAdminMode, onDelete }: SelectionHistoryProps) {
   if (logs.length === 0) return null;
 
   return (
@@ -51,12 +54,24 @@ export function SelectionHistory({ logs }: SelectionHistoryProps) {
                     </span>
                   </div>
                 </div>
-                <Badge variant="outline" className={cn(
-                  "text-[9px] font-bold uppercase tracking-tighter px-1.5 py-0",
-                  isBulk ? "border-primary/30 text-primary" : "border-accent/30 text-accent"
-                )}>
-                  {isBulk ? "Team Assignment" : "Single Selection"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={cn(
+                    "text-[9px] font-bold uppercase tracking-tighter px-1.5 py-0",
+                    isBulk ? "border-primary/30 text-primary" : "border-accent/30 text-accent"
+                  )}>
+                    {isBulk ? "Team Assignment" : "Single Selection"}
+                  </Badge>
+                  {isAdminMode && onDelete && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => onDelete(log.id)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="py-4 px-4">
                 <div className="flex flex-wrap gap-2">
