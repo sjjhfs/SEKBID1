@@ -97,9 +97,9 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         "member-row-frame group relative",
         isLowest && !isTerbatas && "priority-highlight border-destructive/30",
         isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30",
-        hideSelect && "h-12 sm:h-12 border-dashed bg-card/40 cursor-pointer hover:bg-card/60"
+        hideSelect && "!h-9 sm:!h-10 border-dashed bg-card/40 cursor-pointer hover:bg-card/60 px-2 sm:px-3"
       )}
-      style={hideSelect ? { gridTemplateColumns: '32px 1fr 45px', gap: '0.5rem' } : undefined}
+      style={hideSelect ? { gridTemplateColumns: '24px 1fr 35px', gap: '0.25rem' } : undefined}
     >
       {!hideSelect && showUndoFrame && (
         <div className="absolute inset-0 z-10 bg-background/95 flex items-center justify-between px-4 animate-in fade-in zoom-in-95 duration-200">
@@ -125,7 +125,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
           : "bg-primary/10 text-primary",
         hideSelect && "w-6 h-6"
       )}>
-        <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-4 h-4")} />
+        <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-3.5 h-3.5")} />
       </div>
 
       <div className="flex items-center gap-1 min-w-0 overflow-hidden">
@@ -186,7 +186,8 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
           "text-xs font-bold px-1.5 py-0.5 rounded tabular-nums",
           isLowest 
             ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-            : "bg-muted text-foreground"
+            : "bg-muted text-foreground",
+          hideSelect && "text-[10px] px-1 py-0"
         )}>
           {member.selectionFrequency}
         </span>
