@@ -19,6 +19,7 @@ export default function Home() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Automatically "start" the app by signing in the user anonymously if they aren't already.
   useEffect(() => {
     if (!isUserLoading && !user && auth) {
       initiateAnonymousSignIn(auth);
@@ -111,6 +112,7 @@ export default function Home() {
                       className="pl-9 bg-card border-border/50 focus:ring-primary/50"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      autoFocus
                     />
                   </div>
                 </div>
