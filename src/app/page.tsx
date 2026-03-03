@@ -86,7 +86,7 @@ export default function Home() {
     setLastSelectedSuggested([]);
     
     toast({ 
-      title: "Bulk Undo Successful", 
+      title: "Undo Successful", 
       description: "Previous bulk selection has been reverted." 
     });
   };
@@ -156,7 +156,7 @@ export default function Home() {
                           variant="outline" 
                           size="sm" 
                           onClick={handleCopySuggestions}
-                          className="h-8 px-3 text-xs border-primary/20 hover:bg-primary/5"
+                          className="h-8 px-3 text-xs border-primary/20 hover:bg-primary/5 w-[100px]"
                         >
                           {copied ? (
                             <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-500" />
@@ -170,10 +170,10 @@ export default function Home() {
                             variant="destructive" 
                             size="sm" 
                             onClick={handleUndoBulk}
-                            className="h-8 px-3 text-xs animate-in slide-in-from-top-1 duration-200"
+                            className="h-8 px-3 text-xs animate-in slide-in-from-top-1 duration-200 w-[100px]"
                           >
                             <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-                            Undo Bulk
+                            Undo
                           </Button>
                         )}
                       </div>
