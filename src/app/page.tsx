@@ -58,7 +58,8 @@ export default function Home() {
   const handleCopySuggestions = () => {
     if (allSuggested.length === 0) return;
     
-    const text = `Suggested Greeters for Today:\n\nINTI:\n${suggestedInti.map(m => `• ${m.name}`).join('\n')}\n\nANGGOTA:\n${suggestedAnggota.map(m => `• ${m.name}`).join('\n')}`;
+    // Format exactly as requested: bulleted list of names only
+    const text = allSuggested.map(m => `• ${m.name}`).join('\n');
     
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
