@@ -26,7 +26,7 @@ export function useMembers() {
 
   const historyQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return query(collection(firestore, 'selection_history'), orderBy('timestamp', 'desc'), limit(20));
+    return query(collection(firestore, 'selection_history'), orderBy('timestamp', 'desc'), limit(50));
   }, [firestore, user]);
 
   const { data: members, isLoading: loading } = useCollection<Omit<Member, 'id'>>(membersQuery);
@@ -63,7 +63,16 @@ export function useMembers() {
     }
   }, [loading, statsLoading, members, globalStats, firestore, user]);
 
-  const selectMember = async (id: string) => {
+  const addSelectionLog = async (memberNames: string[]) => {
+    if (!firestore) return;
+    const logRef = doc(collection(firestore, 'selection_history'));
+    setDocumentNonBlocking(logRef, {
+      memberNames,
+      timestamp: serverTimestamp()
+    }, { merge: true });
+  };
+
+  const selectMember = async (id: string, skipLog: boolean = false) => {
     if (!firestore) return;
     const memberRef = doc(firestore, 'members', id);
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
@@ -76,6 +85,13 @@ export function useMembers() {
     updateDocumentNonBlocking(sRef, {
       totalSelectionsMade: increment(1)
     });
+
+    if (!skipLog && members) {
+      const member = members.find(m => m.id === id);
+      if (member) {
+        addSelectionLog([member.name]);
+      }
+    }
   };
 
   const undoSelection = async (id: string) => {
@@ -101,15 +117,6 @@ export function useMembers() {
       type,
       selectionFrequency: 0,
       updatedAt: serverTimestamp()
-    }, { merge: true });
-  };
-
-  const addSelectionLog = async (memberNames: string[]) => {
-    if (!firestore) return;
-    const logRef = doc(collection(firestore, 'selection_history'));
-    setDocumentNonBlocking(logRef, {
-      memberNames,
-      timestamp: serverTimestamp()
     }, { merge: true });
   };
 

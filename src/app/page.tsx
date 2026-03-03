@@ -82,10 +82,11 @@ export default function Home() {
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
-      ids.forEach(id => selectMember(id));
+      // Use skipLog=true since we're creating a bulk log manually
+      ids.forEach(id => selectMember(id, true));
       setLastSelectedSuggested(ids);
 
-      // Log to history
+      // Log bulk entry to history
       addSelectionLog(names);
 
       toast({ 
@@ -242,7 +243,7 @@ export default function Home() {
                 </div>
 
                 <div className="w-full flex justify-end mb-8">
-                  <div className="relative w-full max-w-sm">
+                  <div className="relative w-full max-sm:max-w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Search members..."
@@ -343,7 +344,6 @@ export default function Home() {
                   </section>
                 </div>
 
-                {/* Selection History Section */}
                 <SelectionHistory logs={selectionHistory as any[]} />
               </div>
             )}
