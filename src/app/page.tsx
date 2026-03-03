@@ -21,11 +21,10 @@ export default function Home() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [copied, setCopied] = useState(false);
-  // This state is not persisted in localStorage, so it resets on reload as requested.
   const [lastSelectedSuggested, setLastSelectedSuggested] = useState<string[]>([]);
+  const [skippedSuggestions, setSkippedSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
 
-  // Automatically "start" the app by signing in the user anonymously if they aren't already.
   useEffect(() => {
     if (!isUserLoading && !user && auth) {
       initiateAnonymousSignIn(auth);
@@ -48,9 +47,14 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
-  // Suggestions: 2 INTI and 6 ANGGOTA with lowest frequency
-  const suggestedInti = [...intiMembers].slice(0, 2);
-  const suggestedAnggota = [...anggotaMembers].slice(0, 6);
+  const suggestedInti = intiMembers
+    .filter(m => !skippedSuggestions.includes(m.id))
+    .slice(0, 2);
+    
+  const suggestedAnggota = anggotaMembers
+    .filter(m => !skippedSuggestions.includes(m.id))
+    .slice(0, 6);
+    
   const allSuggested = [...suggestedInti, ...suggestedAnggota];
 
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
@@ -60,12 +64,9 @@ export default function Home() {
   const handleCopySuggestions = () => {
     if (allSuggested.length === 0) return;
     
-    // 1. Copy to clipboard (exactly requested format)
     const text = allSuggested.map(m => `• ${m.name}`).join('\n');
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
-      
-      // 2. Increment frequencies for all suggested (by 1)
       const ids = allSuggested.map(m => m.id);
       ids.forEach(id => selectMember(id));
       setLastSelectedSuggested(ids);
@@ -81,13 +82,17 @@ export default function Home() {
 
   const handleUndoBulk = () => {
     if (lastSelectedSuggested.length === 0) return;
-    
     lastSelectedSuggested.forEach(id => undoSelection(id));
     setLastSelectedSuggested([]);
-    
+    toast({ title: "Undo Successful", description: "Previous bulk selection has been reverted." });
+  };
+
+  const handleSkipMember = (id: string) => {
+    setSkippedSuggestions(prev => [...prev, id]);
     toast({ 
-      title: "Undo Successful", 
-      description: "Previous bulk selection has been reverted." 
+      title: "Member Changed", 
+      description: "Suggestion updated with next candidate.",
+      duration: 1500
     });
   };
 
@@ -143,7 +148,6 @@ export default function Home() {
               </div>
             ) : (
               <div className="w-full">
-                {/* Suggestions Section */}
                 {allSuggested.length > 0 && !searchTerm && (
                   <section className="mb-12 w-full max-w-[800px] animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50">
                     <div className="flex items-start justify-between mb-6">
@@ -190,6 +194,7 @@ export default function Home() {
                               isLowest={true}
                               isAdminMode={false}
                               hideSelect={true}
+                              onClick={() => handleSkipMember(member.id)}
                             />
                           ))}
                         </div>
@@ -204,6 +209,7 @@ export default function Home() {
                               isLowest={true}
                               isAdminMode={false}
                               hideSelect={true}
+                              onClick={() => handleSkipMember(member.id)}
                             />
                           ))}
                         </div>
