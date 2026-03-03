@@ -6,11 +6,13 @@ import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus, Sparkles, Loader2, UsersRound, Search } from "lucide-react";
+import { UserPlus, Sparkles, Loader2, UsersRound, Search, Lightbulb, Copy, CheckCircle2 } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const auth = useAuth();
@@ -18,6 +20,8 @@ export default function Home() {
   const { members, loading, selectMember, resetAllData, deleteAllMembers } = useMembers();
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   // Automatically "start" the app by signing in the user anonymously if they aren't already.
   useEffect(() => {
@@ -42,9 +46,26 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
 
+  // Suggestions: 2 INTI and 6 ANGGOTA with lowest frequency
+  const suggestedInti = [...intiMembers].slice(0, 2);
+  const suggestedAnggota = [...anggotaMembers].slice(0, 6);
+  const allSuggested = [...suggestedInti, ...suggestedAnggota];
+
   const minInti = intiMembers.length > 0 ? Math.min(...intiMembers.map(m => m.selectionFrequency)) : 0;
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
   const minTerbatas = terbatasMembers.length > 0 ? Math.min(...terbatasMembers.map(m => m.selectionFrequency)) : 0;
+
+  const handleCopySuggestions = () => {
+    if (allSuggested.length === 0) return;
+    
+    const text = `Suggested Greeters for Today:\n\nINTI:\n${suggestedInti.map(m => `• ${m.name}`).join('\n')}\n\nANGGOTA:\n${suggestedAnggota.map(m => `• ${m.name}`).join('\n')}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      toast({ title: "Copied to clipboard!" });
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   if (isUserLoading) {
     return (
@@ -98,6 +119,62 @@ export default function Home() {
               </div>
             ) : (
               <div className="w-full">
+                {/* Suggestions Section */}
+                {allSuggested.length > 0 && !searchTerm && (
+                  <section className="mb-16 w-full max-w-[1000px] animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="flex items-center justify-between mb-6 border-b border-primary/20 pb-4">
+                      <div className="flex items-center gap-2">
+                        <Lightbulb className="w-6 h-6 text-yellow-400 fill-yellow-400/20" />
+                        <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-tight">Suggested for Today</h2>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleCopySuggestions}
+                        className="h-9 px-4 hover:bg-primary/10 border-primary/30"
+                      >
+                        {copied ? (
+                          <CheckCircle2 className="w-4 h-4 mr-2 text-green-500" />
+                        ) : (
+                          <Copy className="w-4 h-4 mr-2" />
+                        )}
+                        {copied ? "Copied" : "Copy List"}
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <p className="text-xs font-bold uppercase text-primary tracking-widest px-1">INTI (Top 2)</p>
+                        <div className="grid gap-3">
+                          {suggestedInti.map(member => (
+                            <MemberCard
+                              key={`suggested-${member.id}`}
+                              member={member}
+                              isLowest={true}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <p className="text-xs font-bold uppercase text-accent tracking-widest px-1">ANGGOTA (Top 6)</p>
+                        <div className="grid gap-3">
+                          {suggestedAnggota.map(member => (
+                            <MemberCard
+                              key={`suggested-${member.id}`}
+                              member={member}
+                              isLowest={true}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                )}
+
                 <div className="mb-12 flex justify-start">
                   <div className="w-full max-w-2xl sm:max-w-full">
                     <StatsDashboard members={members} alignment="left" />
