@@ -27,21 +27,21 @@ service cloud.firestore {
     // --- Collection Rules ---
 
     match /members/{memberId} {
-      allow get, list: if isSignedIn();
+      allow read: if isSignedIn();
       allow create: if isSignedIn();
       allow update: if isSignedIn() && isExisting();
       allow delete: if isSignedIn() && isExisting();
     }
 
     match /app_statistics/{statId} {
-      allow get, list: if isSignedIn();
+      allow read: if isSignedIn();
       allow create: if isSignedIn();
       allow update: if isSignedIn() && isExisting();
       allow delete: if isSignedIn() && isExisting();
     }
 
     match /selection_history/{logId} {
-      allow get, list: if isSignedIn();
+      allow read: if isSignedIn();
       allow create: if isSignedIn();
       allow update, delete: if isAdmin();
     }

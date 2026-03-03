@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemoFirebase, useCollection, useFirestore, useDoc } from '@/firebase';
+import { useMemoFirebase, useCollection, useFirestore, useDoc, useUser } from '@/firebase';
 import { collection, doc, writeBatch, increment, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
 import { Member, MemberCategory } from '@/types/member';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -12,28 +12,29 @@ import { FirestorePermissionError } from '@/firebase/errors';
 
 export function useMembers() {
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const membersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return collection(firestore, 'members');
-  }, [firestore]);
+  }, [firestore, user]);
 
   const statsRef = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return doc(firestore, 'app_statistics', 'globalStats');
-  }, [firestore]);
+  }, [firestore, user]);
 
   const historyQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return query(collection(firestore, 'selection_history'), orderBy('timestamp', 'desc'), limit(20));
-  }, [firestore]);
+  }, [firestore, user]);
 
   const { data: members, isLoading: loading } = useCollection<Omit<Member, 'id'>>(membersQuery);
   const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
   const { data: selectionHistory, isLoading: historyLoading } = useCollection<{ memberNames: string[], timestamp: any }>(historyQuery);
 
   useEffect(() => {
-    if (!loading && !statsLoading && members !== null && members.length === 0 && !globalStats && firestore) {
+    if (!loading && !statsLoading && members !== null && members.length === 0 && !globalStats && firestore && user) {
       const batch = writeBatch(firestore);
       
       INITIAL_MEMBERS.forEach((m) => {
@@ -60,7 +61,7 @@ export function useMembers() {
         }));
       });
     }
-  }, [loading, statsLoading, members, globalStats, firestore]);
+  }, [loading, statsLoading, members, globalStats, firestore, user]);
 
   const selectMember = async (id: string) => {
     if (!firestore) return;
