@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,6 +6,7 @@ import { useMembers } from "@/hooks/useMembers";
 import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
+import { SelectionHistory } from "@/components/SelectionHistory";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus, Sparkles, Loader2, UsersRound, Search, Lightbulb, Copy, CheckCircle2, RotateCcw } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
@@ -17,7 +19,17 @@ import { useToast } from "@/hooks/use-toast";
 export default function Home() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  const { members, loading, selectMember, undoSelection, resetAllData, deleteAllMembers } = useMembers();
+  const { 
+    members, 
+    loading, 
+    selectMember, 
+    undoSelection, 
+    resetAllData, 
+    deleteAllMembers,
+    selectionHistory,
+    addSelectionLog
+  } = useMembers();
+  
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [copied, setCopied] = useState(false);
@@ -64,12 +76,17 @@ export default function Home() {
   const handleCopySuggestions = () => {
     if (allSuggested.length === 0) return;
     
-    const text = allSuggested.map(m => `• ${m.name}`).join('\n');
+    const names = allSuggested.map(m => m.name);
+    const text = names.map(n => `• ${n}`).join('\n');
+    
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
       ids.forEach(id => selectMember(id));
       setLastSelectedSuggested(ids);
+
+      // Log to history
+      addSelectionLog(names);
 
       toast({ 
         title: "Copied & Selected!", 
@@ -325,6 +342,9 @@ export default function Home() {
                     )}
                   </section>
                 </div>
+
+                {/* Selection History Section */}
+                <SelectionHistory logs={selectionHistory as any[]} />
               </div>
             )}
 
