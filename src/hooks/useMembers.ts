@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc } from '@/firebase';
-import { collection, doc, writeBatch, increment, serverTimestamp, getDocs } from 'firebase/firestore';
+import { collection, doc, writeBatch, increment, serverTimestamp } from 'firebase/firestore';
 import { Member, MemberCategory } from '@/types/member';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
@@ -26,10 +26,6 @@ export function useMembers() {
   const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
 
   useEffect(() => {
-    // Only seed if:
-    // 1. Loading is finished for both members and stats
-    // 2. Members collection is empty
-    // 3. Global stats document does not exist yet (indicates first-time setup)
     if (!loading && !statsLoading && members !== null && members.length === 0 && !globalStats && firestore) {
       const batch = writeBatch(firestore);
       
@@ -74,6 +70,21 @@ export function useMembers() {
     });
   };
 
+  const undoSelection = async (id: string) => {
+    if (!firestore) return;
+    const memberRef = doc(firestore, 'members', id);
+    const sRef = doc(firestore, 'app_statistics', 'globalStats');
+
+    updateDocumentNonBlocking(memberRef, {
+      selectionFrequency: increment(-1),
+      updatedAt: serverTimestamp()
+    });
+
+    updateDocumentNonBlocking(sRef, {
+      totalSelectionsMade: increment(-1)
+    });
+  };
+
   const addMember = async (name: string, type: MemberCategory) => {
     if (!firestore) return;
     const newMemberRef = doc(collection(firestore, 'members'));
@@ -104,13 +115,11 @@ export function useMembers() {
     if (!firestore || !members) return;
     const batch = writeBatch(firestore);
     
-    // Delete all member documents
     members.forEach((m) => {
       const docRef = doc(firestore, 'members', m.id);
       batch.delete(docRef);
     });
 
-    // Reset stats but keep the initialization flag so it doesn't re-seed automatically
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
     batch.update(sRef, { 
       totalSelectionsMade: 0, 
@@ -150,6 +159,7 @@ export function useMembers() {
     globalStats,
     loading: loading || statsLoading, 
     selectMember, 
+    undoSelection,
     addMember,
     updateMember,
     deleteMember,
