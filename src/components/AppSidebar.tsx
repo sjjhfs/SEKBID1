@@ -11,8 +11,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
-import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb } from "lucide-react";
+import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Globe } from "lucide-react";
 
 export function AppSidebar() {
   return (
@@ -108,6 +109,18 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="p-4 border-t border-sidebar-border group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
+          <div className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </div>
+          <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
+            <span className="text-[10px] font-bold uppercase tracking-widest">Cloud Sync</span>
+            <span className="text-[8px] opacity-70 uppercase font-semibold">Always Online</span>
+          </div>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
