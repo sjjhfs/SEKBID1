@@ -13,9 +13,22 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Globe } from "lucide-react";
+import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Globe, Cloud } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export function AppSidebar() {
+  const { toast } = useToast();
+
+  const handleShareApp = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      toast({
+        title: "Link Copied!",
+        description: "Share this URL with your team to use the app together.",
+      });
+    });
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4 border-b border-sidebar-border">
@@ -40,6 +53,14 @@ export function AppSidebar() {
                     <Home className="w-4 h-4" />
                     <span>Home</span>
                   </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleShareApp} tooltip="Share App">
+                  <div className="flex items-center gap-2 w-full">
+                    <Share2 className="w-4 h-4 text-primary" />
+                    <span>Share App Link</span>
+                  </div>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -110,14 +131,20 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border group-data-[collapsible=icon]:p-2">
-        <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
-          <div className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
+            <div className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </div>
+            <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
+              <span className="text-[10px] font-bold uppercase tracking-widest">Live Project</span>
+              <span className="text-[8px] opacity-70 uppercase font-semibold">Cloud Database Active</span>
+            </div>
           </div>
-          <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
-            <span className="text-[10px] font-bold uppercase tracking-widest">Cloud Sync</span>
-            <span className="text-[8px] opacity-70 uppercase font-semibold">Always Online</span>
+          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 group-data-[collapsible=icon]:hidden">
+            <Cloud className="w-3 h-3 shrink-0" />
+            <span className="text-[9px] font-medium leading-tight">Shared with team members instantly</span>
           </div>
         </div>
       </SidebarFooter>
