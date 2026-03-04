@@ -35,18 +35,18 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [copied, setCopied] = useState(false);
   const [lastSelectedSuggested, setLastSelectedSuggested] = useState<string[]>([]);
+  const [lastBulkLogId, setLastBulkLogId] = useState<string | null>(null);
   const [skippedSuggestions, setSkippedSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
 
-  // Load and validate bulk undo state from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('lastBulkSelection');
     if (saved) {
-      const { ids, date } = JSON.parse(saved);
+      const { ids, logId, date } = JSON.parse(saved);
       const today = new Date().toDateString();
-      // Only keep it if it was made today
       if (date === today) {
         setLastSelectedSuggested(ids);
+        setLastBulkLogId(logId || null);
       } else {
         localStorage.removeItem('lastBulkSelection');
       }
@@ -89,25 +89,29 @@ export default function Home() {
   const minAnggota = anggotaMembers.length > 0 ? Math.min(...anggotaMembers.map(m => m.selectionFrequency)) : 0;
   const minTerbatas = terbatasMembers.length > 0 ? Math.min(...terbatasMembers.map(m => m.selectionFrequency)) : 0;
 
-  const handleCopySuggestions = () => {
+  const handleCopySuggestions = async () => {
     if (allSuggested.length === 0) return;
     
     const names = allSuggested.map(m => m.name);
     const text = names.map(n => `• ${n}`).join('\n');
     
-    navigator.clipboard.writeText(text).then(() => {
+    try {
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
       
       ids.forEach(id => selectMember(id, true));
       
+      const logId = await addSelectionLog(names);
+      
       setLastSelectedSuggested(ids);
+      setLastBulkLogId(logId);
+      
       localStorage.setItem('lastBulkSelection', JSON.stringify({
         ids,
+        logId,
         date: new Date().toDateString()
       }));
-
-      addSelectionLog(names);
 
       toast({ 
         title: "Copied & Selected!", 
@@ -115,13 +119,22 @@ export default function Home() {
       });
       
       setTimeout(() => setCopied(false), 2000);
-    });
+    } catch (err) {
+      toast({ variant: "destructive", title: "Copy Failed" });
+    }
   };
 
   const handleUndoBulk = () => {
     if (lastSelectedSuggested.length === 0) return;
-    lastSelectedSuggested.forEach(id => undoSelection(id));
+    
+    if (lastBulkLogId) {
+      deleteSelectionLog(lastBulkLogId);
+    }
+    
+    lastSelectedSuggested.forEach(id => undoSelection(id, true));
+    
     setLastSelectedSuggested([]);
+    setLastBulkLogId(null);
     localStorage.removeItem('lastBulkSelection');
     toast({ title: "Undo Successful", description: "Previous bulk selection has been reverted." });
   };
@@ -172,18 +185,10 @@ export default function Home() {
               </p>
             </header>
 
-            {loading && members.length === 0 ? (
-              <div className="w-full space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Skeleton className="h-24" />
-                  <Skeleton className="h-24" />
-                </div>
-                <div className="space-y-4">
-                  <Skeleton className="h-8 w-32" />
-                  <div className="grid gap-3 w-full max-w-[500px]">
-                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
-                  </div>
-                </div>
+            {!user ? (
+              <div className="w-full py-20 text-center">
+                <Loader2 className="w-10 h-10 animate-spin mx-auto text-primary mb-4" />
+                <p className="text-muted-foreground">Authenticating session...</p>
               </div>
             ) : (
               <div className="w-full">

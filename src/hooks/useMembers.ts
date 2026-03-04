@@ -64,12 +64,14 @@ export function useMembers() {
   }, [loading, statsLoading, members, globalStats, firestore, user]);
 
   const addSelectionLog = async (memberNames: string[]) => {
-    if (!firestore) return;
+    if (!firestore) return "";
     const logRef = doc(collection(firestore, 'selection_history'));
+    const id = logRef.id;
     setDocumentNonBlocking(logRef, {
       memberNames,
       timestamp: serverTimestamp()
     }, { merge: true });
+    return id;
   };
 
   const deleteSelectionLog = async (logId: string) => {
@@ -100,7 +102,7 @@ export function useMembers() {
     }
   };
 
-  const undoSelection = async (id: string) => {
+  const undoSelection = async (id: string, skipHistoryDelete: boolean = false) => {
     if (!firestore) return;
     const memberRef = doc(firestore, 'members', id);
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
@@ -113,6 +115,18 @@ export function useMembers() {
     updateDocumentNonBlocking(sRef, {
       totalSelectionsMade: increment(-1)
     });
+
+    if (!skipHistoryDelete && members && selectionHistory) {
+      const member = (members as Member[]).find(m => m.id === id);
+      if (member) {
+        const latestLog = (selectionHistory as any[]).find(log => 
+          log.memberNames.includes(member.name)
+        );
+        if (latestLog) {
+          deleteSelectionLog(latestLog.id);
+        }
+      }
+    }
   };
 
   const addMember = async (name: string, type: MemberCategory) => {
