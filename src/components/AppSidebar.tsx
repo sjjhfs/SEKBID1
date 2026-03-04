@@ -83,17 +83,6 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="History">
-                  <a href="#history" className="flex items-center justify-between group/item">
-                    <div className="flex items-center gap-2">
-                      <History className="w-4 h-4 text-muted-foreground" />
-                      <span>History</span>
-                    </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="INTI Category">
                   <a href="#inti" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
@@ -121,6 +110,17 @@ export function AppSidebar() {
                     <div className="flex items-center gap-2">
                       <UsersRound className="w-4 h-4 text-priority" />
                       <span>TERBATAS</span>
+                    </div>
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="History">
+                  <a href="#history" className="flex items-center justify-between group/item">
+                    <div className="flex items-center gap-2">
+                      <History className="w-4 h-4 text-muted-foreground" />
+                      <span>History</span>
                     </div>
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
                   </a>
