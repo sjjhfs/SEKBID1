@@ -19,7 +19,7 @@ If you want to run this project on your own machine:
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 
 ### Installation
-1. Click the **Download** button in the Firebase Studio header to get the ZIP file.
+1. Click the **Download** button in the Firebase Studio header (top navigation bar) to get the ZIP file.
 2. Extract the project ZIP file.
 3. Open your terminal and navigate to the project folder.
 4. Install the dependencies:
