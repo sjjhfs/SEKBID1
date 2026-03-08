@@ -3,6 +3,7 @@
 This is a member selection app built in Firebase Studio for DOOR GREETER, SEKBID 1!. It is designed to facilitate equitable member selection for community greeting duties.
 
 ## Features
+- **Cloud Persistence:** Your code and member data are automatically saved to the cloud. You never need to worry about manual saves.
 - **Equitable Selection:** Suggests members based on the lowest selection frequency.
 - **Bulk Selection:** Copy a team of suggested members and increment their frequency in one click.
 - **Real-time Sync:** Powered by Firebase Firestore for live updates across devices.
@@ -11,16 +12,17 @@ This is a member selection app built in Firebase Studio for DOOR GREETER, SEKBID
 
 ## Getting Started Locally
 
-To run this project on your own machine, follow these steps:
+If you want to run this project on your own machine:
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v18 or later recommended)
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 
 ### Installation
-1. Download and extract the project ZIP file.
-2. Open your terminal and navigate to the project folder.
-3. Install the dependencies:
+1. Click the **Download** button in the Firebase Studio header to get the ZIP file.
+2. Extract the project ZIP file.
+3. Open your terminal and navigate to the project folder.
+4. Install the dependencies:
    ```bash
    npm install
    ```
@@ -30,7 +32,7 @@ Start the development server:
 ```bash
 npm run dev
 ```
-The app will be available at `http://localhost:9002` (or the port specified in your console).
+The app will be available at `http://localhost:9002`.
 
 ### Deployment
 This app is built with Next.js and is ready for [Firebase App Hosting](https://firebase.google.com/docs/app-hosting). 
