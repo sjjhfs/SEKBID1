@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -13,7 +12,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Users, Cloud } from "lucide-react";
+import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Users, Cloud, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMembers } from "@/hooks/useMembers";
 
@@ -73,6 +72,17 @@ export function AppSidebar() {
           <SidebarGroupLabel>Shortcuts</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Help">
+                  <a href="#help" className="flex items-center justify-between group/item">
+                    <div className="flex items-center gap-2">
+                      <HelpCircle className="w-4 h-4 text-primary" />
+                      <span>Help</span>
+                    </div>
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Suggestions">
                   <a href="#suggestions" className="flex items-center justify-between group/item">
