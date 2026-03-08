@@ -216,7 +216,7 @@ export default function Home() {
                         <AccordionItem value="item-1" className="border-b-primary/10">
                           <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Cara Memilih Petugas</AccordionTrigger>
                           <AccordionContent className="text-muted-foreground text-sm space-y-2">
-                            <p>1. Lihat bagian <strong>Suggested for Today</strong>. Sistem secara otomatis menyarankan anggota dengan jumlah tugas (frequency) paling sedikit.</p>
+                            <p>1. Lihat bagian <strong>Suggested for Today</strong>. Sistem secara otomatis menyarankan anggota dengan jumlah tugas (frequency) paling sedikit. Jika petugas kurang pas, bisa di-klik pada nama petugas untuk mengganti satu persatu.</p>
                             <p>2. Klik tombol <strong>Copy List</strong> untuk menyalin nama petugas dan secara otomatis menambah hitungan tugas mereka.</p>
                             <p>3. Jika ingin memilih secara manual, klik tombol <strong>Select</strong> pada baris nama anggota di kategori INTI, ANGGOTA, atau TERBATAS.</p>
                           </AccordionContent>
