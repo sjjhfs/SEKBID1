@@ -43,7 +43,9 @@ service cloud.firestore {
     match /selection_history/{logId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn();
-      allow update, delete: if isAdmin();
+      // Allow delete for signed-in users to support the 'Undo' functionality
+      allow delete: if isSignedIn();
+      allow update: if isAdmin();
     }
 
     match /roles_admin/{userId} {
