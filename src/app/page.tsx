@@ -204,7 +204,6 @@ export default function Home() {
                           <HelpCircle className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
                           <div>
                             <h2 className="text-sm font-bold uppercase tracking-tight">Bingung? coba baca</h2>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Panduan Penggunaan App</p>
                           </div>
                         </div>
                         <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", isHelpOpen && "rotate-180")} />
