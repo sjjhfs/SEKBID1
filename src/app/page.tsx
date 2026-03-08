@@ -241,6 +241,14 @@ export default function Home() {
                               <li>Menghapus anggota atau reset seluruh hitungan tugas.</li>
                               <li>Menghapus riwayat (history) di bagian bawah.</li>
                             </ul>
+                            <div className="pt-2 border-t border-primary/5 mt-2">
+                              <p className="font-semibold text-primary/80">Kategori Anggota:</p>
+                              <ul className="list-disc pl-5 space-y-1">
+                                <li><strong>INTI:</strong> Anggota Inti.</li>
+                                <li><strong>ANGGOTA:</strong> Sekbid 2 sampai 4, dan sebagian sekbid 5.</li>
+                                <li><strong>TERBATAS:</strong> Sekbid 1 dan sekbid 5 yang bertugas di mulmed dan story.</li>
+                              </ul>
+                            </div>
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>
