@@ -13,11 +13,13 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Globe, Cloud } from "lucide-react";
+import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Users, Cloud } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useMembers } from "@/hooks/useMembers";
 
 export function AppSidebar() {
   const { toast } = useToast();
+  const { members } = useMembers();
 
   const handleShareApp = () => {
     const url = window.location.href;
@@ -132,6 +134,14 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border group-data-[collapsible=icon]:p-2">
         <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-sidebar-accent/50 border border-sidebar-border group-data-[collapsible=icon]:hidden">
+            <div className="flex items-center gap-2">
+              <Users className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Members</span>
+            </div>
+            <span className="text-xs font-bold tabular-nums">{members.length}</span>
+          </div>
+
           <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
             <div className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
