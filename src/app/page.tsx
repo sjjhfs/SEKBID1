@@ -7,7 +7,7 @@ import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { SelectionHistory } from "@/components/SelectionHistory";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus, Sparkles, Loader2, UsersRound, Search, Lightbulb, Copy, CheckCircle2, RotateCcw, HelpCircle } from "lucide-react";
+import { UserPlus, Sparkles, Loader2, UsersRound, Search, Lightbulb, Copy, CheckCircle2, RotateCcw, HelpCircle, ChevronDown } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const auth = useAuth();
@@ -37,6 +39,7 @@ export default function Home() {
   const [lastSelectedSuggested, setLastSelectedSuggested] = useState<string[]>([]);
   const [lastBulkLogId, setLastBulkLogId] = useState<string | null>(null);
   const [skippedSuggestions, setSkippedSuggestions] = useState<string[]>([]);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -193,48 +196,57 @@ export default function Home() {
             ) : (
               <div className="w-full">
                 {/* Help Section */}
-                <section id="help" className="mb-12 w-full max-w-[800px] bg-card/10 border border-primary/20 rounded-2xl p-6 scroll-mt-24">
-                  <div className="flex items-center gap-2 mb-4">
-                    <HelpCircle className="w-5 h-5 text-primary" />
-                    <div>
-                      <h2 className="text-lg font-bold uppercase">Bingung? coba baca</h2>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Panduan Penggunaan App</p>
-                    </div>
-                  </div>
-                  
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1" className="border-b-primary/10">
-                      <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Cara Memilih Petugas</AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground text-sm space-y-2">
-                        <p>1. Lihat bagian <strong>Suggested for Today</strong>. Sistem secara otomatis menyarankan anggota dengan jumlah tugas (frequency) paling sedikit.</p>
-                        <p>2. Klik tombol <strong>Copy List</strong> untuk menyalin nama petugas dan secara otomatis menambah hitungan tugas mereka.</p>
-                        <p>3. Jika ingin memilih secara manual, klik tombol <strong>Select</strong> pada baris nama anggota di kategori INTI, ANGGOTA, atau TERBATAS.</p>
-                      </AccordionContent>
-                    </AccordionItem>
+                <section id="help" className="mb-8 w-full max-w-[800px] bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
+                  <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+                    <CollapsibleTrigger asChild>
+                      <button className="flex items-center justify-between w-full p-4 hover:bg-primary/5 transition-colors text-left group">
+                        <div className="flex items-center gap-3">
+                          <HelpCircle className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
+                          <div>
+                            <h2 className="text-sm font-bold uppercase tracking-tight">Bingung? coba baca</h2>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Panduan Penggunaan App</p>
+                          </div>
+                        </div>
+                        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", isHelpOpen && "rotate-180")} />
+                      </button>
+                    </CollapsibleTrigger>
                     
-                    <AccordionItem value="item-2" className="border-b-primary/10">
-                      <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Tentang Fitur "Undo"</AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground text-sm space-y-2">
-                        <p>• <strong>Undo Massal:</strong> Jika salah menekan "Copy List", gunakan tombol Undo yang muncul di atas daftar saran.</p>
-                        <p>• <strong>Undo Manual:</strong> Tekan dan tahan (long-press) pada baris nama anggota selama 1 detik untuk memunculkan opsi Undo individu.</p>
-                        <p>• <strong>Penting:</strong> Tombol Undo massal akan hilang otomatis pada hari berikutnya untuk menjaga keamanan data.</p>
-                      </AccordionContent>
-                    </AccordionItem>
+                    <CollapsibleContent className="px-4 pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="item-1" className="border-b-primary/10">
+                          <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Cara Memilih Petugas</AccordionTrigger>
+                          <AccordionContent className="text-muted-foreground text-sm space-y-2">
+                            <p>1. Lihat bagian <strong>Suggested for Today</strong>. Sistem secara otomatis menyarankan anggota dengan jumlah tugas (frequency) paling sedikit.</p>
+                            <p>2. Klik tombol <strong>Copy List</strong> untuk menyalin nama petugas dan secara otomatis menambah hitungan tugas mereka.</p>
+                            <p>3. Jika ingin memilih secara manual, klik tombol <strong>Select</strong> pada baris nama anggota di kategori INTI, ANGGOTA, atau TERBATAS.</p>
+                          </AccordionContent>
+                        </AccordionItem>
+                        
+                        <AccordionItem value="item-2" className="border-b-primary/10">
+                          <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Tentang Fitur "Undo"</AccordionTrigger>
+                          <AccordionContent className="text-muted-foreground text-sm space-y-2">
+                            <p>• <strong>Undo Massal:</strong> Jika salah menekan "Copy List", gunakan tombol Undo yang muncul di atas daftar saran.</p>
+                            <p>• <strong>Undo Manual:</strong> Tekan dan tahan (long-press) pada baris nama anggota selama 1 detik untuk memunculkan opsi Undo individu.</p>
+                            <p>• <strong>Penting:</strong> Tombol Undo massal akan hilang otomatis pada hari berikutnya untuk menjaga keamanan data.</p>
+                          </AccordionContent>
+                        </AccordionItem>
 
-                    <AccordionItem value="item-3" className="border-b-primary/10">
-                      <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Admin Mode & Password</AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground text-sm space-y-2">
-                        <p>Klik <strong>Admin Login</strong> di pojok kanan atas dan masukkan password <code>sekbid1haleluya</code>.</p>
-                        <p>Di Admin Mode, Anda bisa:</p>
-                        <ul className="list-disc pl-5 space-y-1">
-                          <li>Menambah anggota baru.</li>
-                          <li>Mengubah nama anggota yang sudah ada.</li>
-                          <li>Menghapus anggota atau reset seluruh hitungan tugas.</li>
-                          <li>Menghapus riwayat (history) di bagian bawah.</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                        <AccordionItem value="item-3" className="border-b-primary/10">
+                          <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Admin Mode & Password</AccordionTrigger>
+                          <AccordionContent className="text-muted-foreground text-sm space-y-2">
+                            <p>Klik <strong>Admin Login</strong> di pojok kanan atas dan masukkan password <code>sekbid1haleluya</code>.</p>
+                            <p>Di Admin Mode, Anda bisa:</p>
+                            <ul className="list-disc pl-5 space-y-1">
+                              <li>Menambah anggota baru.</li>
+                              <li>Mengubah nama anggota yang sudah ada.</li>
+                              <li>Menghapus anggota atau reset seluruh hitungan tugas.</li>
+                              <li>Menghapus riwayat (history) di bagian bawah.</li>
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </section>
 
                 {allSuggested.length > 0 && !searchTerm && (
