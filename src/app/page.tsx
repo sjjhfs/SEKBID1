@@ -166,8 +166,8 @@ export default function Home() {
       <AppSidebar />
       <SidebarTrigger />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4 md:px-6">
-          <main className="w-full flex flex-col items-start mx-auto">
+        <div className="min-h-screen pb-20 pt-10 px-4 md:px-8 w-full">
+          <main className="w-full flex flex-col items-start">
             <header className="flex flex-col mb-12 w-full items-start text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -361,7 +361,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {intiMembers.map((member) => (
                             <MemberCard
@@ -392,7 +392,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {anggotaMembers.map((member) => (
                             <MemberCard
@@ -423,7 +423,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {terbatasMembers.map((member) => (
                             <MemberCard
