@@ -219,18 +219,15 @@ const Sidebar = React.forwardRef<
           className={cn(
             "duration-300 relative h-svh bg-transparent transition-[width] ease-in-out",
             "group-data-[side=right]:rotate-180",
-            // Overlay logic: The spacer stays at icon-width so the content doesn't move when expanded
-            collapsible === "icon" ? "w-[--sidebar-width-icon]" : "w-[--sidebar-width]",
-            "group-data-[collapsible=offcanvas]:w-0",
-            collapsible === "icon" && (variant === "floating" || variant === "inset")
-              ? "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
-              : ""
+            // FIXED: Overlay behavior - the spacer stays at icon width so content isn't pushed
+            "w-[--sidebar-width-icon]",
+            "group-data-[collapsible=offcanvas]:w-0"
           )}
         />
         <div
           className={cn(
-            "duration-300 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-in-out md:flex",
-            "group-data-[state=expanded]:shadow-2xl", // Add shadow when expanded as an overlay
+            "duration-300 fixed inset-y-0 z-50 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-in-out md:flex",
+            "group-data-[state=expanded]:shadow-2xl",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -321,7 +318,7 @@ const SidebarInset = React.forwardRef<
       ref={ref}
       className={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-0 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none",
         className
       )}
       {...props}

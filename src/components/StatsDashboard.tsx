@@ -31,7 +31,7 @@ export function StatsDashboard({
       "grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 w-full",
       alignment === 'center' ? "mx-auto" : "ml-0"
     )}>
-      <Card className="bg-card/50 border-primary/20">
+      <Card className="bg-card/50 border-primary/20 max-w-none">
         <CardContent className="pt-6 flex items-center space-x-4">
           <div className="p-3 rounded-full bg-destructive/10 text-destructive">
             <TrendingDown className="w-6 h-6" />
@@ -43,7 +43,7 @@ export function StatsDashboard({
         </CardContent>
       </Card>
 
-      <Card className="bg-card/50 border-primary/20">
+      <Card className="bg-card/50 border-primary/20 max-w-none">
         <CardContent className="pt-6 flex items-center space-x-4">
           <div className="p-3 rounded-full bg-primary/10 text-primary">
             <Sigma className="w-6 h-6" />
