@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,7 +17,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Member } from "@/types/member";
 
 export default function Home() {
   const auth = useAuth();
@@ -66,18 +69,39 @@ export default function Home() {
     m.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Sorting helper: Frequency first (lowest first), then Recency (oldest first)
+  // This ensures the person JUST selected moves to the absolute bottom of their frequency group
+  const sortByFrequencyAndRecency = (a: Member, b: Member) => {
+    // Primary: Selection Frequency
+    if (a.selectionFrequency !== b.selectionFrequency) {
+      return a.selectionFrequency - b.selectionFrequency;
+    }
+    
+    // Secondary: Recency of selection (lastSelectedAt)
+    // We want smaller (older) timestamps first.
+    const getMillis = (ts: any) => {
+      if (!ts) return 0; // Never selected = earliest priority
+      if (typeof ts.toMillis === 'function') return ts.toMillis();
+      if (ts.seconds) return ts.seconds * 1000;
+      return new Date(ts).getTime();
+    };
+    
+    return getMillis(a.lastSelectedAt) - getMillis(b.lastSelectedAt);
+  };
+
   const intiMembers = filteredMembers
     .filter(m => m.type === 'INTI')
-    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+    .sort(sortByFrequencyAndRecency);
 
   const anggotaMembers = filteredMembers
     .filter(m => m.type === 'ANGGOTA')
-    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+    .sort(sortByFrequencyAndRecency);
 
   const terbatasMembers = filteredMembers
     .filter(m => m.type === 'TERBATAS')
-    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+    .sort(sortByFrequencyAndRecency);
 
+  // Suggested members logic (lowest frequency, oldest selected)
   const suggestedInti = intiMembers
     .filter(m => !skippedSuggestions.includes(m.id))
     .slice(0, 2);
@@ -103,7 +127,10 @@ export default function Home() {
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
       
-      ids.forEach(id => selectMember(id, true));
+      // Select all suggested members
+      for (const id of ids) {
+        await selectMember(id, true);
+      }
       
       const logId = await addSelectionLog(names);
       
@@ -118,7 +145,7 @@ export default function Home() {
 
       toast({ 
         title: "Copied & Selected!", 
-        description: "Suggested list copied and frequencies incremented." 
+        description: "Suggested list copied and frequencies updated." 
       });
       
       setTimeout(() => setCopied(false), 2000);
@@ -164,8 +191,8 @@ export default function Home() {
       <AppSidebar />
       <SidebarTrigger />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
-          <main className="w-full flex flex-col items-start max-w-6xl mx-auto sm:mx-0">
+        <div className="min-h-screen pb-20 pt-10 px-4 md:px-8 w-full">
+          <main className="w-full flex flex-col items-start">
             <header className="flex flex-col mb-12 w-full items-start text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -181,7 +208,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed max-w-2xl">
+              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed w-full">
                 Sekbid 1 Haleluya!
                 Jika terdapat kebingungan jangan malu untuk bertanya.
                 Salam dari Ketua Sekbid 1 2025/2026
@@ -196,7 +223,7 @@ export default function Home() {
             ) : (
               <div className="w-full">
                 {/* Help Section */}
-                <section id="help" className="mb-8 w-full max-w-[800px] bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
+                <section id="help" className="mb-8 w-full bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
                   <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                     <CollapsibleTrigger asChild>
                       <button className="flex items-center justify-between w-full p-4 hover:bg-primary/5 transition-colors text-left group">
@@ -257,7 +284,7 @@ export default function Home() {
                 </section>
 
                 {allSuggested.length > 0 && !searchTerm && (
-                  <section id="suggestions" className="mb-12 w-full max-w-[800px] animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50 scroll-mt-24">
+                  <section id="suggestions" className="mb-12 w-full animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50 scroll-mt-24">
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-2">
                         <Lightbulb className="w-5 h-5 text-yellow-400" />
@@ -291,7 +318,7 @@ export default function Home() {
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <p className="text-[10px] font-bold uppercase text-primary tracking-[0.2em] px-1">INTI (Top 2)</p>
                         <div className="grid gap-2">
@@ -326,14 +353,12 @@ export default function Home() {
                   </section>
                 )}
 
-                <div className="mb-12 flex justify-start">
-                  <div className="w-full max-w-2xl sm:max-w-full">
-                    <StatsDashboard members={members} alignment="left" />
-                  </div>
+                <div className="mb-12 flex justify-start w-full">
+                  <StatsDashboard members={members} alignment="left" />
                 </div>
 
                 <div className="w-full flex justify-end mb-8">
-                  <div className="relative w-full max-sm:max-w-full max-w-sm">
+                  <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Search members..."
@@ -345,8 +370,8 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-12 xl:gap-8 w-full justify-start">
-                  <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="inti">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full justify-start items-start">
+                  <section className="scroll-mt-20 flex flex-col items-start w-full" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -361,21 +386,23 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <div className="grid gap-3 w-full">
-                        {intiMembers.map((member) => (
-                          <MemberCard
-                            key={member.id}
-                            member={member}
-                            isLowest={member.selectionFrequency === minInti}
-                            onSelect={selectMember}
-                            isAdminMode={isAdminMode}
-                          />
-                        ))}
-                      </div>
+                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                        <div className="grid gap-3 w-full pb-4">
+                          {intiMembers.map((member) => (
+                            <MemberCard
+                              key={member.id}
+                              member={member}
+                              isLowest={member.selectionFrequency === minInti}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </ScrollArea>
                     )}
                   </section>
 
-                  <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="anggota">
+                  <section className="scroll-mt-20 flex flex-col items-start w-full" id="anggota">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-accent flex items-center gap-2 uppercase tracking-wide">
                         <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -390,21 +417,23 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <div className="grid gap-3 w-full">
-                        {anggotaMembers.map((member) => (
-                          <MemberCard
-                            key={member.id}
-                            member={member}
-                            isLowest={member.selectionFrequency === minAnggota}
-                            onSelect={selectMember}
-                            isAdminMode={isAdminMode}
-                          />
-                        ))}
-                      </div>
+                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                        <div className="grid gap-3 w-full pb-4">
+                          {anggotaMembers.map((member) => (
+                            <MemberCard
+                              key={member.id}
+                              member={member}
+                              isLowest={member.selectionFrequency === minAnggota}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </ScrollArea>
                     )}
                   </section>
 
-                  <section className="scroll-mt-20 flex flex-col items-start w-full max-w-[500px]" id="terbatas">
+                  <section className="scroll-mt-20 flex flex-col items-start w-full" id="terbatas">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-priority flex items-center gap-2 uppercase tracking-wide">
                         <UsersRound className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -419,22 +448,24 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <div className="grid gap-3 w-full">
-                        {terbatasMembers.map((member) => (
-                          <MemberCard
-                            key={member.id}
-                            member={member}
-                            isLowest={member.selectionFrequency === minTerbatas}
-                            onSelect={selectMember}
-                            isAdminMode={isAdminMode}
-                          />
-                        ))}
-                      </div>
+                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                        <div className="grid gap-3 w-full pb-4">
+                          {terbatasMembers.map((member) => (
+                            <MemberCard
+                              key={member.id}
+                              member={member}
+                              isLowest={member.selectionFrequency === minTerbatas}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </ScrollArea>
                     )}
                   </section>
                 </div>
 
-                <div id="history" className="scroll-mt-24">
+                <div id="history" className="scroll-mt-24 w-full">
                   <SelectionHistory 
                     logs={selectionHistory as any[]} 
                     isAdminMode={isAdminMode}
@@ -444,7 +475,7 @@ export default function Home() {
               </div>
             )}
 
-            <footer className="mt-24 text-left text-sm text-muted-foreground border-t border-border pt-8 w-full max-w-full">
+            <footer className="mt-24 text-left text-sm text-muted-foreground border-t border-border pt-8 w-full">
               <p>© {new Date().getFullYear()} DOOR GREETER, SEKBID 1! • Powered by Firebase Firestore</p>
             </footer>
           </main>

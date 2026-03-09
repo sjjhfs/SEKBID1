@@ -54,22 +54,22 @@
 .member-row-frame {
   @apply relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:shadow-lg hover:border-primary/50;
   width: 100%;
-  max-width: 500px;
-  height: 64px;
-  padding: 0 0.75rem;
+  min-height: 56px;
+  padding: 0.5rem 0.75rem;
   display: grid;
-  /* Fixed columns: Avatar(40), Name(1fr), Freq(50), Priority(70), Button(85) */
-  grid-template-columns: 32px 1fr 45px 70px 85px;
+  /* Updated columns for desktop: Avatar(32), Name(1fr), Prio(40), Freq+Button(110) */
+  grid-template-columns: 32px 1fr 40px 110px;
   align-items: center;
   gap: 0.5rem;
 }
 
 @media (min-width: 640px) {
   .member-row-frame {
-    height: 72px;
-    padding: 0 1.25rem;
-    grid-template-columns: 40px 1fr 60px 80px 100px;
-    gap: 1rem;
+    min-height: 64px;
+    padding: 0.75rem 1rem;
+    /* Updated columns: Avatar(40), Name(1fr), Prio(50), Freq+Button(130) */
+    grid-template-columns: 40px 1fr 50px 130px;
+    gap: 0.75rem;
   }
 }
 

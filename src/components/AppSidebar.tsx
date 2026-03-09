@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Users, Cloud, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +20,7 @@ import { useMembers } from "@/hooks/useMembers";
 export function AppSidebar() {
   const { toast } = useToast();
   const { members } = useMembers();
+  const { setOpen, isMobile } = useSidebar();
 
   const handleShareApp = () => {
     const url = window.location.href;
@@ -30,11 +32,23 @@ export function AppSidebar() {
     });
   };
 
+  const handleMouseEnter = () => {
+    if (!isMobile) setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) setOpen(false);
+  };
+
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-1">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg">
+    <Sidebar 
+      collapsible="icon"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <SidebarHeader className="p-4 border-b border-sidebar-border group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg shrink-0">
             <LayoutDashboard className="size-5" />
           </div>
           <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
@@ -52,7 +66,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild tooltip="Home">
                   <a href="#">
                     <Home className="w-4 h-4" />
-                    <span>Home</span>
+                    <span className="group-data-[collapsible=icon]:hidden">Home</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -60,7 +74,7 @@ export function AppSidebar() {
                 <SidebarMenuButton onClick={handleShareApp} tooltip="Share App">
                   <div className="flex items-center gap-2 w-full">
                     <Share2 className="w-4 h-4 text-primary" />
-                    <span>Share App Link</span>
+                    <span className="group-data-[collapsible=icon]:hidden">Share App Link</span>
                   </div>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -77,9 +91,9 @@ export function AppSidebar() {
                   <a href="#help" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <HelpCircle className="w-4 h-4 text-primary" />
-                      <span>Help</span>
+                      <span className="group-data-[collapsible=icon]:hidden">Help</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -88,9 +102,9 @@ export function AppSidebar() {
                   <a href="#suggestions" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <Lightbulb className="w-4 h-4 text-yellow-400" />
-                      <span>Suggestions</span>
+                      <span className="group-data-[collapsible=icon]:hidden">Suggestions</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -99,9 +113,9 @@ export function AppSidebar() {
                   <a href="#inti" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-4 h-4 text-primary" />
-                      <span>INTI</span>
+                      <span className="group-data-[collapsible=icon]:hidden">INTI</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -110,9 +124,9 @@ export function AppSidebar() {
                   <a href="#anggota" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-4 h-4 text-accent" />
-                      <span>ANGGOTA</span>
+                      <span className="group-data-[collapsible=icon]:hidden">ANGGOTA</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -121,9 +135,9 @@ export function AppSidebar() {
                   <a href="#terbatas" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <UsersRound className="w-4 h-4 text-priority" />
-                      <span>TERBATAS</span>
+                      <span className="group-data-[collapsible=icon]:hidden">TERBATAS</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -132,9 +146,9 @@ export function AppSidebar() {
                   <a href="#history" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <History className="w-4 h-4 text-muted-foreground" />
-                      <span>History</span>
+                      <span className="group-data-[collapsible=icon]:hidden">History</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -152,7 +166,7 @@ export function AppSidebar() {
             <span className="text-xs font-bold tabular-nums">{members.length}</span>
           </div>
 
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
+          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
             <div className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>

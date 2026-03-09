@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Member } from "@/types/member";
@@ -97,7 +97,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         "member-row-frame group relative",
         isLowest && !isTerbatas && "priority-highlight border-destructive/30",
         isLowest && isTerbatas && "terbatas-priority-highlight border-priority/30",
-        hideSelect && "!h-9 sm:!h-10 border-dashed bg-card/40 cursor-pointer hover:bg-card/60 px-2 sm:px-3"
+        hideSelect && "!min-h-9 sm:!min-h-10 border-dashed bg-card/40 cursor-pointer hover:bg-card/60 px-2 sm:px-3"
       )}
       style={hideSelect ? { gridTemplateColumns: '24px 1fr 35px', gap: '0.25rem' } : undefined}
     >
@@ -118,6 +118,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         </div>
       )}
 
+      {/* Column 1: Avatar */}
       <div className={cn(
         "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
         isLowest 
@@ -128,8 +129,11 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-3.5 h-3.5")} />
       </div>
 
-      <div className="flex items-center gap-1 min-w-0 overflow-hidden">
-        <h4 className={cn("font-semibold text-sm truncate", !hideSelect && "sm:text-base")}>{member.name}</h4>
+      {/* Column 2: Name (Flexible, no shortening) */}
+      <div className="flex items-center gap-1 min-w-0 pr-2">
+        <h4 className={cn("font-semibold text-sm leading-tight break-words", !hideSelect && "sm:text-base")}>
+          {member.name}
+        </h4>
         {isAdminMode && !hideSelect && (
           <Dialog open={editOpen} onOpenChange={(open) => {
             setEditOpen(open);
@@ -181,20 +185,9 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         )}
       </div>
 
-      <div className="text-center shrink-0">
-        <span className={cn(
-          "text-xs font-bold px-1.5 py-0.5 rounded tabular-nums",
-          isLowest 
-            ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-            : "bg-muted text-foreground",
-          hideSelect && "text-[10px] px-1 py-0"
-        )}>
-          {member.selectionFrequency}
-        </span>
-      </div>
-
-      {!hideSelect && (
+      {!hideSelect ? (
         <>
+          {/* Column 3: Priority Badge */}
           <div className="flex justify-center shrink-0">
             {isLowest && (
               <Badge 
@@ -207,30 +200,52 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
               </Badge>
             )}
           </div>
-          <div className="flex justify-end">
+
+          {/* Column 4: Frequency & Smaller Select Button (Closer together) */}
+          <div className="flex items-center justify-end gap-2 ml-auto">
+            <span className={cn(
+              "text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded tabular-nums shrink-0",
+              isLowest 
+                ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
+                : "bg-muted text-foreground"
+            )}>
+              {member.selectionFrequency}
+            </span>
             <Button
               onClick={handleSelect}
               disabled={isSelecting}
               size="sm"
               className={cn(
-                "h-8 sm:h-10 w-full relative overflow-hidden transition-all duration-300",
+                "h-7 sm:h-8 w-14 sm:w-16 relative overflow-hidden transition-all duration-300 px-1",
                 isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
               )}
             >
               <span className={cn(
-                "text-xs sm:text-sm font-bold",
+                "text-[10px] sm:text-xs font-bold",
                 isSelecting ? "scale-0 opacity-0" : "scale-100 opacity-100"
               )}>
                 Select
               </span>
               {isSelecting && (
                 <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in-50">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                 </div>
               )}
             </Button>
           </div>
         </>
+      ) : (
+        /* Simple Frequency for suggestions view */
+        <div className="text-center shrink-0">
+          <span className={cn(
+            "text-[10px] font-bold px-1 py-0 rounded tabular-nums",
+            isLowest 
+              ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
+              : "bg-muted text-foreground"
+          )}>
+            {member.selectionFrequency}
+          </span>
+        </div>
       )}
     </div>
   );
