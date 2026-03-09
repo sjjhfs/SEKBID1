@@ -54,7 +54,6 @@
 .member-row-frame {
   @apply relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:shadow-lg hover:border-primary/50;
   width: 100%;
-  max-width: 500px;
   height: 64px;
   padding: 0 0.75rem;
   display: grid;
