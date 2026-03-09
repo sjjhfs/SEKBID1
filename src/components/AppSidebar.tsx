@@ -46,9 +46,9 @@ export function AppSidebar() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-1">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg">
+      <SidebarHeader className="p-4 border-b border-sidebar-border group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg shrink-0">
             <LayoutDashboard className="size-5" />
           </div>
           <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
@@ -166,7 +166,7 @@ export function AppSidebar() {
             <span className="text-xs font-bold tabular-nums">{members.length}</span>
           </div>
 
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
+          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
             <div className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
