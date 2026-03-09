@@ -217,17 +217,20 @@ const Sidebar = React.forwardRef<
       >
         <div
           className={cn(
-            "duration-300 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-in-out",
-            "group-data-[collapsible=offcanvas]:w-0",
+            "duration-300 relative h-svh bg-transparent transition-[width] ease-in-out",
             "group-data-[side=right]:rotate-180",
-            variant === "floating" || variant === "inset"
-              ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
+            // Overlay logic: The spacer stays at icon-width so the content doesn't move when expanded
+            collapsible === "icon" ? "w-[--sidebar-width-icon]" : "w-[--sidebar-width]",
+            "group-data-[collapsible=offcanvas]:w-0",
+            collapsible === "icon" && (variant === "floating" || variant === "inset")
+              ? "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
+              : ""
           )}
         />
         <div
           className={cn(
             "duration-300 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-in-out md:flex",
+            "group-data-[state=expanded]:shadow-2xl", // Add shadow when expanded as an overlay
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
