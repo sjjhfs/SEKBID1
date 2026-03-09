@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { UserPlus, UsersRound, Home, LayoutDashboard, ChevronRight, History, Lightbulb, Share2, Users, Cloud, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +20,7 @@ import { useMembers } from "@/hooks/useMembers";
 export function AppSidebar() {
   const { toast } = useToast();
   const { members } = useMembers();
+  const { setOpen, isMobile } = useSidebar();
 
   const handleShareApp = () => {
     const url = window.location.href;
@@ -30,8 +32,20 @@ export function AppSidebar() {
     });
   };
 
+  const handleMouseEnter = () => {
+    if (!isMobile) setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) setOpen(false);
+  };
+
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar 
+      collapsible="icon"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-1">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg">

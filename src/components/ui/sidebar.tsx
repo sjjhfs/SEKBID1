@@ -14,9 +14,9 @@ import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
-  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  TooltipContent,
 } from "@/components/ui/tooltip"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -213,6 +213,7 @@ const Sidebar = React.forwardRef<
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
         data-side={side}
+        {...props}
       >
         <div
           className={cn(
@@ -235,7 +236,6 @@ const Sidebar = React.forwardRef<
               : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
             className
           )}
-          {...props}
         >
           <div
             data-sidebar="sidebar"
@@ -263,7 +263,7 @@ const SidebarTrigger = React.forwardRef<
       variant="default"
       size="icon"
       className={cn(
-        "fixed left-0 top-[10%] z-50 h-14 w-10 -translate-y-1/2 rounded-l-none rounded-r-full shadow-lg transition-all duration-300 hover:w-12 border-l-0",
+        "md:hidden fixed left-0 top-[10%] z-50 h-14 w-10 -translate-y-1/2 rounded-l-none rounded-r-full shadow-lg transition-all duration-300 hover:w-12 border-l-0",
         state === "expanded" ? "left-[var(--sidebar-width)]" : "left-0",
         className
       )}
