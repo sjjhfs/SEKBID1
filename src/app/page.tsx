@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -359,17 +361,19 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <div className="grid gap-3 w-full">
-                        {intiMembers.map((member) => (
-                          <MemberCard
-                            key={member.id}
-                            member={member}
-                            isLowest={member.selectionFrequency === minInti}
-                            onSelect={selectMember}
-                            isAdminMode={isAdminMode}
-                          />
-                        ))}
-                      </div>
+                      <ScrollArea className="h-[600px] w-full pr-4">
+                        <div className="grid gap-3 w-full pb-4">
+                          {intiMembers.map((member) => (
+                            <MemberCard
+                              key={member.id}
+                              member={member}
+                              isLowest={member.selectionFrequency === minInti}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </ScrollArea>
                     )}
                   </section>
 
@@ -388,17 +392,19 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <div className="grid gap-3 w-full">
-                        {anggotaMembers.map((member) => (
-                          <MemberCard
-                            key={member.id}
-                            member={member}
-                            isLowest={member.selectionFrequency === minAnggota}
-                            onSelect={selectMember}
-                            isAdminMode={isAdminMode}
-                          />
-                        ))}
-                      </div>
+                      <ScrollArea className="h-[600px] w-full pr-4">
+                        <div className="grid gap-3 w-full pb-4">
+                          {anggotaMembers.map((member) => (
+                            <MemberCard
+                              key={member.id}
+                              member={member}
+                              isLowest={member.selectionFrequency === minAnggota}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </ScrollArea>
                     )}
                   </section>
 
@@ -417,17 +423,19 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <div className="grid gap-3 w-full">
-                        {terbatasMembers.map((member) => (
-                          <MemberCard
-                            key={member.id}
-                            member={member}
-                            isLowest={member.selectionFrequency === minTerbatas}
-                            onSelect={selectMember}
-                            isAdminMode={isAdminMode}
-                          />
-                        ))}
-                      </div>
+                      <ScrollArea className="h-[600px] w-full pr-4">
+                        <div className="grid gap-3 w-full pb-4">
+                          {terbatasMembers.map((member) => (
+                            <MemberCard
+                              key={member.id}
+                              member={member}
+                              isLowest={member.selectionFrequency === minTerbatas}
+                              onSelect={selectMember}
+                              isAdminMode={isAdminMode}
+                            />
+                          ))}
+                        </div>
+                      </ScrollArea>
                     )}
                   </section>
                 </div>
