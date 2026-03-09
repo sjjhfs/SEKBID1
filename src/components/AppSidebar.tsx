@@ -66,7 +66,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild tooltip="Home">
                   <a href="#">
                     <Home className="w-4 h-4" />
-                    <span>Home</span>
+                    <span className="group-data-[collapsible=icon]:hidden">Home</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -74,7 +74,7 @@ export function AppSidebar() {
                 <SidebarMenuButton onClick={handleShareApp} tooltip="Share App">
                   <div className="flex items-center gap-2 w-full">
                     <Share2 className="w-4 h-4 text-primary" />
-                    <span>Share App Link</span>
+                    <span className="group-data-[collapsible=icon]:hidden">Share App Link</span>
                   </div>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -91,9 +91,9 @@ export function AppSidebar() {
                   <a href="#help" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <HelpCircle className="w-4 h-4 text-primary" />
-                      <span>Help</span>
+                      <span className="group-data-[collapsible=icon]:hidden">Help</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -102,9 +102,9 @@ export function AppSidebar() {
                   <a href="#suggestions" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <Lightbulb className="w-4 h-4 text-yellow-400" />
-                      <span>Suggestions</span>
+                      <span className="group-data-[collapsible=icon]:hidden">Suggestions</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -113,9 +113,9 @@ export function AppSidebar() {
                   <a href="#inti" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-4 h-4 text-primary" />
-                      <span>INTI</span>
+                      <span className="group-data-[collapsible=icon]:hidden">INTI</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -124,9 +124,9 @@ export function AppSidebar() {
                   <a href="#anggota" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-4 h-4 text-accent" />
-                      <span>ANGGOTA</span>
+                      <span className="group-data-[collapsible=icon]:hidden">ANGGOTA</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -135,9 +135,9 @@ export function AppSidebar() {
                   <a href="#terbatas" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <UsersRound className="w-4 h-4 text-priority" />
-                      <span>TERBATAS</span>
+                      <span className="group-data-[collapsible=icon]:hidden">TERBATAS</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -146,9 +146,9 @@ export function AppSidebar() {
                   <a href="#history" className="flex items-center justify-between group/item">
                     <div className="flex items-center gap-2">
                       <History className="w-4 h-4 text-muted-foreground" />
-                      <span>History</span>
+                      <span className="group-data-[collapsible=icon]:hidden">History</span>
                     </div>
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity" />
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-50 transition-opacity group-data-[collapsible=icon]:hidden" />
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
