@@ -166,7 +166,7 @@ export default function Home() {
       <AppSidebar />
       <SidebarTrigger />
       <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4 md:px-10">
+        <div className="min-h-screen pb-20 pt-10 px-4 md:px-6">
           <main className="w-full flex flex-col items-start mx-auto">
             <header className="flex flex-col mb-12 w-full items-start text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
@@ -183,7 +183,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed max-w-2xl">
+              <p className="text-muted-foreground text-base md:text-lg mt-6 whitespace-pre-line leading-relaxed w-full">
                 Sekbid 1 Haleluya!
                 Jika terdapat kebingungan jangan malu untuk bertanya.
                 Salam dari Ketua Sekbid 1 2025/2026
