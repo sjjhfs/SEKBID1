@@ -19,6 +19,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Member } from "@/types/member";
 
 export default function Home() {
   const auth = useAuth();
@@ -68,17 +69,31 @@ export default function Home() {
     m.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Sorting helper: Frequency first, then Recency (most recent to bottom)
+  const sortByFrequencyAndRecency = (a: Member, b: Member) => {
+    if (a.selectionFrequency !== b.selectionFrequency) {
+      return a.selectionFrequency - b.selectionFrequency;
+    }
+    const getMillis = (ts: any) => {
+      if (!ts) return 0;
+      if (typeof ts.toMillis === 'function') return ts.toMillis();
+      if (ts.seconds) return ts.seconds * 1000;
+      return new Date(ts).getTime();
+    };
+    return getMillis(a.lastSelectedAt) - getMillis(b.lastSelectedAt);
+  };
+
   const intiMembers = filteredMembers
     .filter(m => m.type === 'INTI')
-    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+    .sort(sortByFrequencyAndRecency);
 
   const anggotaMembers = filteredMembers
     .filter(m => m.type === 'ANGGOTA')
-    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+    .sort(sortByFrequencyAndRecency);
 
   const terbatasMembers = filteredMembers
     .filter(m => m.type === 'TERBATAS')
-    .sort((a, b) => a.selectionFrequency - b.selectionFrequency);
+    .sort(sortByFrequencyAndRecency);
 
   const suggestedInti = intiMembers
     .filter(m => !skippedSuggestions.includes(m.id))
