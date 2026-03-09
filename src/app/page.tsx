@@ -361,7 +361,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-[600px] w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {intiMembers.map((member) => (
                             <MemberCard
@@ -392,7 +392,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-[600px] w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {anggotaMembers.map((member) => (
                             <MemberCard
@@ -423,7 +423,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-[600px] w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {terbatasMembers.map((member) => (
                             <MemberCard
