@@ -57,7 +57,7 @@
   min-height: 56px;
   padding: 0.5rem 0.75rem;
   display: grid;
-  /* Updated columns for desktop: Avatar(32), Name(1fr), Prio(40), Freq+Button(110) */
+  /* Updated columns: Avatar(32), Name(1fr), Prio(40), Freq+Button(110) */
   grid-template-columns: 32px 1fr 40px 110px;
   align-items: center;
   gap: 0.5rem;

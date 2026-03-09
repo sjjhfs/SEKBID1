@@ -129,7 +129,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-3.5 h-3.5")} />
       </div>
 
-      {/* Column 2: Name (Flexible, no shortening) */}
+      {/* Column 2: Name */}
       <div className="flex items-center gap-1 min-w-0 pr-2">
         <h4 className={cn("font-semibold text-sm leading-tight break-words", !hideSelect && "sm:text-base")}>
           {member.name}
@@ -140,29 +140,17 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
             if (open) setEditName(member.name);
           }}>
             <DialogTrigger asChild>
-              <button 
-                className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors shrink-0"
-                title="Rename Member"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <button className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors shrink-0" onClick={(e) => e.stopPropagation()}>
                 <Pencil className="w-3 h-3" />
               </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Rename Member</DialogTitle>
-              </DialogHeader>
+              <DialogHeader><DialogTitle>Rename Member</DialogTitle></DialogHeader>
               <div className="py-6 space-y-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">Full Name</label>
-                  <Input 
-                    value={editName} 
-                    onChange={(e) => setEditName(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
-                    autoFocus
-                  />
+                  <Input value={editName} onChange={(e) => setEditName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleUpdate()} autoFocus />
                 </div>
-                
                 <div className="pt-4 border-t border-border">
                   <div className="flex justify-between items-center">
                     <div className="space-y-0.5">
@@ -170,8 +158,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
                       <p className="text-sm font-bold">{member.selectionFrequency}</p>
                     </div>
                     <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Remove Member
+                      <Trash2 className="w-4 h-4 mr-2" /> Remove Member
                     </Button>
                   </div>
                 </div>
@@ -190,24 +177,17 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
           {/* Column 3: Priority Badge */}
           <div className="flex justify-center shrink-0">
             {isLowest && (
-              <Badge 
-                className={cn(
-                  "text-[9px] sm:text-[10px] h-4 uppercase px-1 leading-none font-bold",
-                  isTerbatas ? "terbatas-priority-badge" : "priority-badge"
-                )}
-              >
+              <Badge className={cn("text-[9px] sm:text-[10px] h-4 uppercase px-1 leading-none font-bold", isTerbatas ? "terbatas-priority-badge" : "priority-badge")}>
                 Prio
               </Badge>
             )}
           </div>
 
-          {/* Column 4: Frequency & Smaller Select Button (Closer together) */}
+          {/* Column 4: Frequency & Button */}
           <div className="flex items-center justify-end gap-2 ml-auto">
             <span className={cn(
               "text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded tabular-nums shrink-0",
-              isLowest 
-                ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-                : "bg-muted text-foreground"
+              isLowest ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") : "bg-muted text-foreground"
             )}>
               {member.selectionFrequency}
             </span>
@@ -215,34 +195,16 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
               onClick={handleSelect}
               disabled={isSelecting}
               size="sm"
-              className={cn(
-                "h-7 sm:h-8 w-14 sm:w-16 relative overflow-hidden transition-all duration-300 px-1",
-                isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
-              )}
+              className={cn("h-7 sm:h-8 w-14 sm:w-16 relative overflow-hidden transition-all duration-300 px-1", isSelecting ? "bg-green-600" : "bg-primary")}
             >
-              <span className={cn(
-                "text-[10px] sm:text-xs font-bold",
-                isSelecting ? "scale-0 opacity-0" : "scale-100 opacity-100"
-              )}>
-                Select
-              </span>
-              {isSelecting && (
-                <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in-50">
-                  <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                </div>
-              )}
+              <span className={cn("text-[10px] sm:text-xs font-bold", isSelecting ? "scale-0" : "scale-100")}>Select</span>
+              {isSelecting && <Check className="absolute w-3.5 h-3.5 text-white animate-in zoom-in-50" />}
             </Button>
           </div>
         </>
       ) : (
-        /* Simple Frequency for suggestions view */
         <div className="text-center shrink-0">
-          <span className={cn(
-            "text-[10px] font-bold px-1 py-0 rounded tabular-nums",
-            isLowest 
-              ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
-              : "bg-muted text-foreground"
-          )}>
+          <span className={cn("text-[10px] font-bold px-1 py-0 rounded tabular-nums", isLowest ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") : "bg-muted text-foreground")}>
             {member.selectionFrequency}
           </span>
         </div>

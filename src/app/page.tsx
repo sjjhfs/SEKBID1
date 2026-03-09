@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -70,22 +69,16 @@ export default function Home() {
   );
 
   // Sorting helper: Frequency first (lowest first), then Recency (oldest first)
-  // This ensures the person JUST selected moves to the absolute bottom of their frequency group
   const sortByFrequencyAndRecency = (a: Member, b: Member) => {
-    // Primary: Selection Frequency
     if (a.selectionFrequency !== b.selectionFrequency) {
       return a.selectionFrequency - b.selectionFrequency;
     }
-    
-    // Secondary: Recency of selection (lastSelectedAt)
-    // We want smaller (older) timestamps first.
     const getMillis = (ts: any) => {
-      if (!ts) return 0; // Never selected = earliest priority
+      if (!ts) return 0;
       if (typeof ts.toMillis === 'function') return ts.toMillis();
       if (ts.seconds) return ts.seconds * 1000;
       return new Date(ts).getTime();
     };
-    
     return getMillis(a.lastSelectedAt) - getMillis(b.lastSelectedAt);
   };
 
@@ -101,7 +94,6 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort(sortByFrequencyAndRecency);
 
-  // Suggested members logic (lowest frequency, oldest selected)
   const suggestedInti = intiMembers
     .filter(m => !skippedSuggestions.includes(m.id))
     .slice(0, 2);
@@ -118,36 +110,24 @@ export default function Home() {
 
   const handleCopySuggestions = async () => {
     if (allSuggested.length === 0) return;
-    
     const names = allSuggested.map(m => m.name);
     const text = names.map(n => `• ${n}`).join('\n');
-    
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
-      
-      // Select all suggested members
       for (const id of ids) {
         await selectMember(id, true);
       }
-      
       const logId = await addSelectionLog(names);
-      
       setLastSelectedSuggested(ids);
       setLastBulkLogId(logId);
-      
       localStorage.setItem('lastBulkSelection', JSON.stringify({
         ids,
         logId,
         date: new Date().toDateString()
       }));
-
-      toast({ 
-        title: "Copied & Selected!", 
-        description: "Suggested list copied and frequencies updated." 
-      });
-      
+      toast({ title: "Copied & Selected!", description: "Suggested list copied and frequencies updated." });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       toast({ variant: "destructive", title: "Copy Failed" });
@@ -156,13 +136,8 @@ export default function Home() {
 
   const handleUndoBulk = () => {
     if (lastSelectedSuggested.length === 0) return;
-    
-    if (lastBulkLogId) {
-      deleteSelectionLog(lastBulkLogId);
-    }
-    
+    if (lastBulkLogId) deleteSelectionLog(lastBulkLogId);
     lastSelectedSuggested.forEach(id => undoSelection(id, true));
-    
     setLastSelectedSuggested([]);
     setLastBulkLogId(null);
     localStorage.removeItem('lastBulkSelection');
@@ -171,11 +146,7 @@ export default function Home() {
 
   const handleSkipMember = (id: string) => {
     setSkippedSuggestions(prev => [...prev, id]);
-    toast({ 
-      title: "Member Changed", 
-      description: "Suggestion updated with next candidate.",
-      duration: 1500
-    });
+    toast({ title: "Member Changed", description: "Suggestion updated with next candidate.", duration: 1500 });
   };
 
   if (isUserLoading) {
@@ -291,26 +262,12 @@ export default function Home() {
                         <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight">Suggested for Today</h2>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={handleCopySuggestions}
-                          className="h-8 px-3 text-xs border-primary/20 hover:bg-primary/5 w-[100px]"
-                        >
-                          {copied ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-500" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5 mr-1.5" />
-                          )}
+                        <Button variant="outline" size="sm" onClick={handleCopySuggestions} className="h-8 px-3 text-xs border-primary/20 hover:bg-primary/5 w-[100px]">
+                          {copied ? <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
                           {copied ? "Copied" : "Copy List"}
                         </Button>
                         {lastSelectedSuggested.length > 0 && (
-                          <Button 
-                            variant="destructive" 
-                            size="sm" 
-                            onClick={handleUndoBulk}
-                            className="h-8 px-3 text-xs animate-in slide-in-from-top-1 duration-200 w-[100px]"
-                          >
+                          <Button variant="destructive" size="sm" onClick={handleUndoBulk} className="h-8 px-3 text-xs animate-in slide-in-from-top-1 duration-200 w-[100px]">
                             <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
                             Undo
                           </Button>
@@ -323,14 +280,7 @@ export default function Home() {
                         <p className="text-[10px] font-bold uppercase text-primary tracking-[0.2em] px-1">INTI (Top 2)</p>
                         <div className="grid gap-2">
                           {suggestedInti.map(member => (
-                            <MemberCard
-                              key={`suggested-${member.id}`}
-                              member={member}
-                              isLowest={true}
-                              isAdminMode={false}
-                              hideSelect={true}
-                              onClick={() => handleSkipMember(member.id)}
-                            />
+                            <MemberCard key={`suggested-${member.id}`} member={member} isLowest={true} isAdminMode={false} hideSelect={true} onClick={() => handleSkipMember(member.id)} />
                           ))}
                         </div>
                       </div>
@@ -338,14 +288,7 @@ export default function Home() {
                         <p className="text-[10px] font-bold uppercase text-accent tracking-[0.2em] px-1">ANGGOTA (Top 6)</p>
                         <div className="grid gap-2">
                           {suggestedAnggota.map(member => (
-                            <MemberCard
-                              key={`suggested-${member.id}`}
-                              member={member}
-                              isLowest={true}
-                              isAdminMode={false}
-                              hideSelect={true}
-                              onClick={() => handleSkipMember(member.id)}
-                            />
+                            <MemberCard key={`suggested-${member.id}`} member={member} isLowest={true} isAdminMode={false} hideSelect={true} onClick={() => handleSkipMember(member.id)} />
                           ))}
                         </div>
                       </div>
@@ -360,13 +303,7 @@ export default function Home() {
                 <div className="w-full flex justify-end mb-8">
                   <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search members..."
-                      className="pl-9 bg-card border-border/50 focus:ring-primary/50"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      autoFocus
-                    />
+                    <Input placeholder="Search members..." className="pl-9 bg-card border-border/50 focus:ring-primary/50" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                   </div>
                 </div>
 
@@ -381,25 +318,13 @@ export default function Home() {
                         {intiMembers.length}
                       </span>
                     </div>
-                    {intiMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-left py-4">
-                        {searchTerm ? "No matches found." : "No members in this category."}
-                      </p>
-                    ) : (
-                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
-                        <div className="grid gap-3 w-full pb-4">
-                          {intiMembers.map((member) => (
-                            <MemberCard
-                              key={member.id}
-                              member={member}
-                              isLowest={member.selectionFrequency === minInti}
-                              onSelect={selectMember}
-                              isAdminMode={isAdminMode}
-                            />
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    )}
+                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                      <div className="grid gap-3 w-full pb-4">
+                        {intiMembers.map((member) => (
+                          <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minInti} onSelect={selectMember} isAdminMode={isAdminMode} />
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </section>
 
                   <section className="scroll-mt-20 flex flex-col items-start w-full" id="anggota">
@@ -412,25 +337,13 @@ export default function Home() {
                         {anggotaMembers.length}
                       </span>
                     </div>
-                    {anggotaMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-left py-4">
-                        {searchTerm ? "No matches found." : "No members in this category."}
-                      </p>
-                    ) : (
-                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
-                        <div className="grid gap-3 w-full pb-4">
-                          {anggotaMembers.map((member) => (
-                            <MemberCard
-                              key={member.id}
-                              member={member}
-                              isLowest={member.selectionFrequency === minAnggota}
-                              onSelect={selectMember}
-                              isAdminMode={isAdminMode}
-                            />
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    )}
+                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                      <div className="grid gap-3 w-full pb-4">
+                        {anggotaMembers.map((member) => (
+                          <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minAnggota} onSelect={selectMember} isAdminMode={isAdminMode} />
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </section>
 
                   <section className="scroll-mt-20 flex flex-col items-start w-full" id="terbatas">
@@ -443,34 +356,18 @@ export default function Home() {
                         {terbatasMembers.length}
                       </span>
                     </div>
-                    {terbatasMembers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic text-left py-4">
-                        {searchTerm ? "No matches found." : "No members in this category."}
-                      </p>
-                    ) : (
-                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
-                        <div className="grid gap-3 w-full pb-4">
-                          {terbatasMembers.map((member) => (
-                            <MemberCard
-                              key={member.id}
-                              member={member}
-                              isLowest={member.selectionFrequency === minTerbatas}
-                              onSelect={selectMember}
-                              isAdminMode={isAdminMode}
-                            />
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    )}
+                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                      <div className="grid gap-3 w-full pb-4">
+                        {terbatasMembers.map((member) => (
+                          <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minTerbatas} onSelect={selectMember} isAdminMode={isAdminMode} />
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </section>
                 </div>
 
                 <div id="history" className="scroll-mt-24 w-full">
-                  <SelectionHistory 
-                    logs={selectionHistory as any[]} 
-                    isAdminMode={isAdminMode}
-                    onDelete={deleteSelectionLog}
-                  />
+                  <SelectionHistory logs={selectionHistory as any[]} isAdminMode={isAdminMode} onDelete={deleteSelectionLog} />
                 </div>
               </div>
             )}

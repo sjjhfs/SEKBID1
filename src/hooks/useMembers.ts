@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc, useUser } from '@/firebase';
@@ -35,13 +34,10 @@ export function useMembers() {
   const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
   const { data: selectionHistory, isLoading: historyLoading } = useCollection<{ memberNames: string[], timestamp: any }>(historyQuery);
 
-  // Hardened initialization logic: Only seeds if collection is empty AND stats document doesn't confirm initialization.
   useEffect(() => {
     const isActuallyInitialized = globalStats && (globalStats as any).isInitialized;
-    
     if (!loading && !statsLoading && members !== null && members.length === 0 && !isActuallyInitialized && firestore && user) {
       const batch = writeBatch(firestore);
-      
       INITIAL_MEMBERS.forEach((m) => {
         const docRef = doc(collection(firestore, 'members'), m.id);
         batch.set(docRef, {
@@ -52,19 +48,10 @@ export function useMembers() {
           updatedAt: serverTimestamp()
         });
       });
-
       const sRef = doc(firestore, 'app_statistics', 'globalStats');
-      batch.set(sRef, {
-        totalSelectionsMade: 0,
-        membersSelectedAtLeastOnceCount: 0,
-        isInitialized: true
-      }, { merge: true });
-      
-      batch.commit().catch((err) => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: 'members',
-          operation: 'write',
-        }));
+      batch.set(sRef, { totalSelectionsMade: 0, isInitialized: true }, { merge: true });
+      batch.commit().catch(() => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({ path: 'members', operation: 'write' }));
       });
     }
   }, [loading, statsLoading, members, globalStats, firestore, user]);
@@ -73,86 +60,51 @@ export function useMembers() {
     if (!firestore) return "";
     const logRef = doc(collection(firestore, 'selection_history'));
     const id = logRef.id;
-    setDocumentNonBlocking(logRef, {
-      memberNames,
-      timestamp: serverTimestamp()
-    }, { merge: true });
+    setDocumentNonBlocking(logRef, { memberNames, timestamp: serverTimestamp() }, { merge: true });
     return id;
   };
 
   const deleteSelectionLog = async (logId: string) => {
     if (!firestore) return;
-    const logRef = doc(firestore, 'selection_history', logId);
-    deleteDocumentNonBlocking(logRef);
+    deleteDocumentNonBlocking(doc(firestore, 'selection_history', logId));
   };
 
   const selectMember = async (id: string, skipLog: boolean = false) => {
     if (!firestore) return;
     const memberRef = doc(firestore, 'members', id);
-    const sRef = doc(firestore, 'app_statistics', 'globalStats');
-
-    // Crucial: Update lastSelectedAt so the sorting logic can push this member to the bottom of the tier
     updateDocumentNonBlocking(memberRef, {
       selectionFrequency: increment(1),
       lastSelectedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
-
-    updateDocumentNonBlocking(sRef, {
-      totalSelectionsMade: increment(1)
-    });
-
+    updateDocumentNonBlocking(doc(firestore, 'app_statistics', 'globalStats'), { totalSelectionsMade: increment(1) });
     if (!skipLog && members) {
       const member = (members as Member[]).find(m => m.id === id);
-      if (member) {
-        addSelectionLog([member.name]);
-      }
+      if (member) addSelectionLog([member.name]);
     }
   };
 
   const undoSelection = async (id: string, skipHistoryDelete: boolean = false) => {
     if (!firestore) return;
-    const memberRef = doc(firestore, 'members', id);
-    const sRef = doc(firestore, 'app_statistics', 'globalStats');
-
-    updateDocumentNonBlocking(memberRef, {
-      selectionFrequency: increment(-1),
-      updatedAt: serverTimestamp()
-    });
-
-    updateDocumentNonBlocking(sRef, {
-      totalSelectionsMade: increment(-1)
-    });
-
+    updateDocumentNonBlocking(doc(firestore, 'members', id), { selectionFrequency: increment(-1), updatedAt: serverTimestamp() });
+    updateDocumentNonBlocking(doc(firestore, 'app_statistics', 'globalStats'), { totalSelectionsMade: increment(-1) });
     if (!skipHistoryDelete && members && selectionHistory) {
       const member = (members as Member[]).find(m => m.id === id);
       if (member) {
-        const latestLog = (selectionHistory as any[]).find(log => 
-          log.memberNames.includes(member.name)
-        );
-        if (latestLog) {
-          deleteSelectionLog(latestLog.id);
-        }
+        const latestLog = (selectionHistory as any[]).find(log => log.memberNames.includes(member.name));
+        if (latestLog) deleteSelectionLog(latestLog.id);
       }
     }
   };
 
   const addMember = useCallback(async (name: string, type: MemberCategory) => {
     if (!firestore || !members) return;
-    
-    // Check for duplicates before adding
     const isDuplicate = members.some(m => m.name.toLowerCase() === name.trim().toLowerCase());
     if (isDuplicate) {
-      toast({ 
-        variant: "destructive", 
-        title: "Duplicate Member", 
-        description: `Member with name "${name}" already exists.` 
-      });
+      toast({ variant: "destructive", title: "Duplicate Member", description: `"${name}" already exists.` });
       return;
     }
-
-    const newMemberRef = doc(collection(firestore, 'members'));
-    setDocumentNonBlocking(newMemberRef, {
+    setDocumentNonBlocking(doc(collection(firestore, 'members')), {
       name: name.trim(),
       type,
       selectionFrequency: 0,
@@ -163,60 +115,28 @@ export function useMembers() {
 
   const updateMember = async (id: string, updates: Partial<Member>) => {
     if (!firestore) return;
-    const memberRef = doc(firestore, 'members', id);
-    updateDocumentNonBlocking(memberRef, {
-      ...updates,
-      updatedAt: serverTimestamp()
-    });
+    updateDocumentNonBlocking(doc(firestore, 'members', id), { ...updates, updatedAt: serverTimestamp() });
   };
 
   const deleteMember = async (id: string) => {
     if (!firestore) return;
-    const memberRef = doc(firestore, 'members', id);
-    deleteDocumentNonBlocking(memberRef);
+    deleteDocumentNonBlocking(doc(firestore, 'members', id));
   };
 
   const deleteAllMembers = async () => {
     if (!firestore || !members) return;
     const batch = writeBatch(firestore);
-    
-    members.forEach((m) => {
-      const docRef = doc(firestore, 'members', m.id);
-      batch.delete(docRef);
-    });
-
-    const sRef = doc(firestore, 'app_statistics', 'globalStats');
-    batch.update(sRef, { 
-      totalSelectionsMade: 0, 
-      membersSelectedAtLeastOnceCount: 0 
-    });
-    
-    batch.commit().catch((err) => {
-      errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: 'members',
-        operation: 'delete',
-      }));
-    });
+    members.forEach(m => batch.delete(doc(firestore, 'members', m.id)));
+    batch.update(doc(firestore, 'app_statistics', 'globalStats'), { totalSelectionsMade: 0 });
+    batch.commit();
   };
 
   const resetAllData = async () => {
     if (!firestore || !members) return;
     const batch = writeBatch(firestore);
-    
-    members.forEach((m) => {
-      const docRef = doc(firestore, 'members', m.id);
-      batch.update(docRef, { selectionFrequency: 0, lastSelectedAt: null });
-    });
-
-    const sRef = doc(firestore, 'app_statistics', 'globalStats');
-    batch.update(sRef, { totalSelectionsMade: 0, membersSelectedAtLeastOnceCount: 0 });
-    
-    batch.commit().catch((err) => {
-      errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: 'members',
-        operation: 'update',
-      }));
-    });
+    members.forEach(m => batch.update(doc(firestore, 'members', m.id), { selectionFrequency: 0, lastSelectedAt: null }));
+    batch.update(doc(firestore, 'app_statistics', 'globalStats'), { totalSelectionsMade: 0 });
+    batch.commit();
   };
 
   return { 
