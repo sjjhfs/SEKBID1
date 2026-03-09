@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc, useUser } from '@/firebase';
@@ -6,13 +5,15 @@ import { collection, doc, writeBatch, increment, serverTimestamp, query, orderBy
 import { Member, MemberCategory } from '@/types/member';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { INITIAL_MEMBERS } from '@/lib/initial-data';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { useToast } from '@/hooks/use-toast';
 
 export function useMembers() {
   const firestore = useFirestore();
   const { user } = useUser();
+  const { toast } = useToast();
 
   const membersQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -33,8 +34,11 @@ export function useMembers() {
   const { data: globalStats, isLoading: statsLoading } = useDoc(statsRef);
   const { data: selectionHistory, isLoading: historyLoading } = useCollection<{ memberNames: string[], timestamp: any }>(historyQuery);
 
+  // Hardened initialization logic: Only seeds if collection is empty AND stats document doesn't confirm initialization.
   useEffect(() => {
-    if (!loading && !statsLoading && members !== null && members.length === 0 && !globalStats && firestore && user) {
+    const isActuallyInitialized = globalStats && (globalStats as any).isInitialized;
+    
+    if (!loading && !statsLoading && members !== null && members.length === 0 && !isActuallyInitialized && firestore && user) {
       const batch = writeBatch(firestore);
       
       INITIAL_MEMBERS.forEach((m) => {
@@ -129,16 +133,28 @@ export function useMembers() {
     }
   };
 
-  const addMember = async (name: string, type: MemberCategory) => {
-    if (!firestore) return;
+  const addMember = useCallback(async (name: string, type: MemberCategory) => {
+    if (!firestore || !members) return;
+    
+    // Check for duplicates before adding
+    const isDuplicate = members.some(m => m.name.toLowerCase() === name.trim().toLowerCase());
+    if (isDuplicate) {
+      toast({ 
+        variant: "destructive", 
+        title: "Duplicate Member", 
+        description: `Member with name "${name}" already exists.` 
+      });
+      return;
+    }
+
     const newMemberRef = doc(collection(firestore, 'members'));
     setDocumentNonBlocking(newMemberRef, {
-      name,
+      name: name.trim(),
       type,
       selectionFrequency: 0,
       updatedAt: serverTimestamp()
     }, { merge: true });
-  };
+  }, [firestore, members, toast]);
 
   const updateMember = async (id: string, updates: Partial<Member>) => {
     if (!firestore) return;

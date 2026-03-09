@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Member } from "@/types/member";
@@ -129,9 +129,11 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-3.5 h-3.5")} />
       </div>
 
-      {/* Column 2: Name */}
-      <div className="flex items-center gap-1 min-w-0">
-        <h4 className={cn("font-semibold text-sm leading-tight", !hideSelect && "sm:text-base")}>{member.name}</h4>
+      {/* Column 2: Name (Flexible, no shortening) */}
+      <div className="flex items-center gap-1 min-w-0 pr-2">
+        <h4 className={cn("font-semibold text-sm leading-tight break-words", !hideSelect && "sm:text-base")}>
+          {member.name}
+        </h4>
         {isAdminMode && !hideSelect && (
           <Dialog open={editOpen} onOpenChange={(open) => {
             setEditOpen(open);
@@ -183,7 +185,6 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         )}
       </div>
 
-      {/* Logic for desktop/full view only */}
       {!hideSelect ? (
         <>
           {/* Column 3: Priority Badge */}
@@ -200,26 +201,22 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
             )}
           </div>
 
-          {/* Column 4: Frequency (Now closer to button) */}
-          <div className="text-center shrink-0">
+          {/* Column 4: Frequency & Smaller Select Button (Closer together) */}
+          <div className="flex items-center justify-end gap-2 ml-auto">
             <span className={cn(
-              "text-[10px] sm:text-xs font-bold px-1 py-0.5 rounded tabular-nums",
+              "text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded tabular-nums shrink-0",
               isLowest 
                 ? (isTerbatas ? "bg-priority/20 text-priority" : "bg-destructive/20 text-destructive") 
                 : "bg-muted text-foreground"
             )}>
               {member.selectionFrequency}
             </span>
-          </div>
-
-          {/* Column 5: Smaller Select Button */}
-          <div className="flex justify-end">
             <Button
               onClick={handleSelect}
               disabled={isSelecting}
               size="sm"
               className={cn(
-                "h-7 sm:h-8 w-full relative overflow-hidden transition-all duration-300 px-2",
+                "h-7 sm:h-8 w-14 sm:w-16 relative overflow-hidden transition-all duration-300 px-1",
                 isSelecting ? "bg-green-600 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
               )}
             >
