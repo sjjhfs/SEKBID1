@@ -54,22 +54,21 @@
 .member-row-frame {
   @apply relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:shadow-lg hover:border-primary/50;
   width: 100%;
-  min-height: 56px;
-  padding: 0.5rem 0.75rem;
+  min-height: 52px;
+  padding: 0.35rem 0.6rem;
   display: grid;
-  /* Updated columns: Avatar(32), Name(1fr), Prio(40), Freq+Button(110) */
-  grid-template-columns: 32px 1fr 40px 110px;
+  /* Updated columns for side-to-side fit: Avatar(32), Name(flex), Prio(auto), Action(auto) */
+  grid-template-columns: 32px 1fr auto auto;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 @media (min-width: 640px) {
   .member-row-frame {
-    min-height: 64px;
-    padding: 0.75rem 1rem;
-    /* Updated columns: Avatar(40), Name(1fr), Prio(50), Freq+Button(130) */
-    grid-template-columns: 40px 1fr 50px 130px;
-    gap: 0.75rem;
+    min-height: 56px;
+    padding: 0.5rem 0.75rem;
+    grid-template-columns: 36px 1fr auto auto;
+    gap: 0.6rem;
   }
 }
 

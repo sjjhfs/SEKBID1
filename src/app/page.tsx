@@ -6,7 +6,6 @@ import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { SelectionHistory } from "@/components/SelectionHistory";
-import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus, Sparkles, Loader2, UsersRound, Search, Lightbulb, Copy, CheckCircle2, RotateCcw, HelpCircle, ChevronDown } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -158,11 +157,11 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background w-full overflow-x-hidden">
       <AppSidebar />
       <SidebarTrigger />
-      <SidebarInset>
-        <div className="min-h-screen pb-20 pt-10 px-4 md:px-8 w-full">
+      <SidebarInset className="w-full">
+        <div className="min-h-screen pb-20 pt-10 px-2 md:px-6 w-full max-w-none">
           <main className="w-full flex flex-col items-start">
             <header className="flex flex-col mb-12 w-full items-start text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
@@ -192,7 +191,7 @@ export default function Home() {
                 <p className="text-muted-foreground">Authenticating session...</p>
               </div>
             ) : (
-              <div className="w-full">
+              <div className="w-full max-w-none">
                 {/* Help Section */}
                 <section id="help" className="mb-8 w-full bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
                   <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
@@ -239,14 +238,6 @@ export default function Home() {
                               <li>Menghapus anggota atau reset seluruh hitungan tugas.</li>
                               <li>Menghapus riwayat (history) di bagian bawah.</li>
                             </ul>
-                            <div className="pt-2 border-t border-primary/5 mt-2">
-                              <p className="font-semibold text-primary/80">Kategori Anggota:</p>
-                              <ul className="list-disc pl-5 space-y-1">
-                                <li><strong>INTI:</strong> Anggota Inti.</li>
-                                <li><strong>ANGGOTA:</strong> Sekbid 2 sampai 4, dan sebagian sekbid 5.</li>
-                                <li><strong>TERBATAS:</strong> Sekbid 1 dan sekbid 5 yang bertugas di mulmed dan story.</li>
-                              </ul>
-                            </div>
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>
@@ -307,7 +298,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full justify-start items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full justify-start items-start">
                   <section className="scroll-mt-20 flex flex-col items-start w-full" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
@@ -318,7 +309,7 @@ export default function Home() {
                         {intiMembers.length}
                       </span>
                     </div>
-                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-2">
                       <div className="grid gap-3 w-full pb-4">
                         {intiMembers.map((member) => (
                           <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minInti} onSelect={selectMember} isAdminMode={isAdminMode} />
@@ -337,7 +328,7 @@ export default function Home() {
                         {anggotaMembers.length}
                       </span>
                     </div>
-                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-2">
                       <div className="grid gap-3 w-full pb-4">
                         {anggotaMembers.map((member) => (
                           <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minAnggota} onSelect={selectMember} isAdminMode={isAdminMode} />
@@ -356,7 +347,7 @@ export default function Home() {
                         {terbatasMembers.length}
                       </span>
                     </div>
-                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-2">
                       <div className="grid gap-3 w-full pb-4">
                         {terbatasMembers.map((member) => (
                           <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minTerbatas} onSelect={selectMember} isAdminMode={isAdminMode} />

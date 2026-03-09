@@ -219,8 +219,8 @@ const Sidebar = React.forwardRef<
           className={cn(
             "duration-300 relative h-svh bg-transparent transition-[width] ease-in-out",
             "group-data-[side=right]:rotate-180",
-            // FIXED: Overlay behavior - the spacer always stays at icon width on desktop
-            collapsible === "icon" ? "w-[--sidebar-width-icon]" : "w-[--sidebar-width]",
+            // FIXED: Overlay behavior - the spacer stays at icon width so content isn't pushed
+            "w-[--sidebar-width-icon]",
             "group-data-[collapsible=offcanvas]:w-0"
           )}
         />
@@ -318,7 +318,7 @@ const SidebarInset = React.forwardRef<
       ref={ref}
       className={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-0 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none",
         className
       )}
       {...props}

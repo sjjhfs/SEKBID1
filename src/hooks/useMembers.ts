@@ -35,24 +35,29 @@ export function useMembers() {
   const { data: selectionHistory, isLoading: historyLoading } = useCollection<{ memberNames: string[], timestamp: any }>(historyQuery);
 
   useEffect(() => {
-    const isActuallyInitialized = globalStats && (globalStats as any).isInitialized;
-    if (!loading && !statsLoading && members !== null && members.length === 0 && !isActuallyInitialized && firestore && user) {
-      const batch = writeBatch(firestore);
-      INITIAL_MEMBERS.forEach((m) => {
-        const docRef = doc(collection(firestore, 'members'), m.id);
-        batch.set(docRef, {
-          name: m.name,
-          type: m.type,
-          selectionFrequency: 0,
-          lastSelectedAt: null,
-          updatedAt: serverTimestamp()
+    // Robust check for initialization: Only run if statsLoading is finished and isInitialized is definitively false
+    if (!loading && !statsLoading && firestore && user) {
+      const isActuallyInitialized = globalStats && (globalStats as any).isInitialized;
+      
+      // We check members length to see if we need to seed, but ONLY if globalStats explicitly tells us it hasn't been initialized yet
+      if (members !== null && members.length === 0 && !isActuallyInitialized) {
+        const batch = writeBatch(firestore);
+        INITIAL_MEMBERS.forEach((m) => {
+          const docRef = doc(collection(firestore, 'members'), m.id);
+          batch.set(docRef, {
+            name: m.name,
+            type: m.type,
+            selectionFrequency: 0,
+            lastSelectedAt: null,
+            updatedAt: serverTimestamp()
+          });
         });
-      });
-      const sRef = doc(firestore, 'app_statistics', 'globalStats');
-      batch.set(sRef, { totalSelectionsMade: 0, isInitialized: true }, { merge: true });
-      batch.commit().catch(() => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({ path: 'members', operation: 'write' }));
-      });
+        const sRef = doc(firestore, 'app_statistics', 'globalStats');
+        batch.set(sRef, { totalSelectionsMade: 0, isInitialized: true }, { merge: true });
+        batch.commit().catch(() => {
+          errorEmitter.emit('permission-error', new FirestorePermissionError({ path: 'members', operation: 'write' }));
+        });
+      }
     }
   }, [loading, statsLoading, members, globalStats, firestore, user]);
 
