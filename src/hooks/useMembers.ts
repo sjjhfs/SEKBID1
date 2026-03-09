@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc, useUser } from '@/firebase';
@@ -47,6 +48,7 @@ export function useMembers() {
           name: m.name,
           type: m.type,
           selectionFrequency: 0,
+          lastSelectedAt: null,
           updatedAt: serverTimestamp()
         });
       });
@@ -89,9 +91,11 @@ export function useMembers() {
     const memberRef = doc(firestore, 'members', id);
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
 
+    // Crucial: Update lastSelectedAt so the sorting logic can push this member to the bottom of the tier
     updateDocumentNonBlocking(memberRef, {
       selectionFrequency: increment(1),
-      lastSelectedAt: serverTimestamp()
+      lastSelectedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
 
     updateDocumentNonBlocking(sRef, {
@@ -99,7 +103,7 @@ export function useMembers() {
     });
 
     if (!skipLog && members) {
-      const member = members.find(m => m.id === id);
+      const member = (members as Member[]).find(m => m.id === id);
       if (member) {
         addSelectionLog([member.name]);
       }
@@ -152,6 +156,7 @@ export function useMembers() {
       name: name.trim(),
       type,
       selectionFrequency: 0,
+      lastSelectedAt: null,
       updatedAt: serverTimestamp()
     }, { merge: true });
   }, [firestore, members, toast]);

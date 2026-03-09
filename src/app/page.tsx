@@ -69,17 +69,23 @@ export default function Home() {
     m.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sorting helper: Frequency first, then Recency (most recent to bottom)
+  // Sorting helper: Frequency first (lowest first), then Recency (oldest first)
+  // This ensures the person JUST selected moves to the absolute bottom of their frequency group
   const sortByFrequencyAndRecency = (a: Member, b: Member) => {
+    // Primary: Selection Frequency
     if (a.selectionFrequency !== b.selectionFrequency) {
       return a.selectionFrequency - b.selectionFrequency;
     }
+    
+    // Secondary: Recency of selection (lastSelectedAt)
+    // We want smaller (older) timestamps first.
     const getMillis = (ts: any) => {
-      if (!ts) return 0;
+      if (!ts) return 0; // Never selected = earliest priority
       if (typeof ts.toMillis === 'function') return ts.toMillis();
       if (ts.seconds) return ts.seconds * 1000;
       return new Date(ts).getTime();
     };
+    
     return getMillis(a.lastSelectedAt) - getMillis(b.lastSelectedAt);
   };
 
@@ -95,6 +101,7 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort(sortByFrequencyAndRecency);
 
+  // Suggested members logic (lowest frequency, oldest selected)
   const suggestedInti = intiMembers
     .filter(m => !skippedSuggestions.includes(m.id))
     .slice(0, 2);
@@ -120,7 +127,10 @@ export default function Home() {
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
       
-      ids.forEach(id => selectMember(id, true));
+      // Select all suggested members
+      for (const id of ids) {
+        await selectMember(id, true);
+      }
       
       const logId = await addSelectionLog(names);
       
@@ -135,7 +145,7 @@ export default function Home() {
 
       toast({ 
         title: "Copied & Selected!", 
-        description: "Suggested list copied and frequencies incremented." 
+        description: "Suggested list copied and frequencies updated." 
       });
       
       setTimeout(() => setCopied(false), 2000);
