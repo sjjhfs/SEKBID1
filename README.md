@@ -2,46 +2,49 @@
 
 This is a member selection app built in Firebase Studio for DOOR GREETER, SEKBID 1!. It is designed to facilitate equitable member selection for community greeting duties.
 
+## 🚀 How to Upload to GitHub
+
+Firebase Studio is a prototyping environment. To move your project to GitHub, follow these steps:
+
+### 1. Download the Project
+Click the **Download** button in the Firebase Studio header (top right). This will give you a ZIP file containing all your code and configuration.
+
+### 2. Prepare Locally
+1. Extract the ZIP file to a folder on your computer.
+2. Open your terminal (or Command Prompt) inside that folder.
+
+### 3. Initialize & Push
+Run these commands one by one. Replace `<YOUR_NEW_REPOSITORY_URL>` with the URL of a new, empty repository you've created on GitHub.
+
+```bash
+# Initialize git
+git init
+
+# Add all files (the .gitignore will automatically hide unnecessary files)
+git add .
+
+# Create the first commit
+git commit -m "Initial commit from Firebase Studio"
+
+# Set the branch to main
+git branch -M main
+
+# Link to your GitHub repo
+git remote add origin <YOUR_NEW_REPOSITORY_URL>
+
+# Push the code
+git push -u origin main
+```
+
 ## Features
-- **Cloud Persistence:** Your code and member data are automatically saved to the cloud.
-- **Equitable Selection:** Suggests members based on the lowest selection frequency.
+- **Equitable Selection:** The app automatically puts the most recently selected person at the bottom of the list.
+- **Scrolling Categories:** Balanced 3-column layout on desktop that remains readable on mobile.
 - **Bulk Selection:** Copy a team of suggested members and increment their frequency in one click.
-- **Real-time Sync:** Powered by Firebase Firestore for live updates across devices.
-- **Selection History:** Logs every selection (single or bulk) with the ability to undo and delete.
-- **Admin Mode:** Secure management of members and history with password protection.
+- **Selection History:** Logs every selection with the ability to undo.
+- **Admin Mode:** Secure management of members (Password: `sekbid1haleluya`).
 
-## Getting Started Locally
-
-### 1. Download & Extract
-1. Click the **Download** button in the Firebase Studio header to get the ZIP file.
-2. Extract the project ZIP file to a new folder on your computer.
-
-### 2. Initializing a New Repository
-If you want to upload this to your own GitHub/GitLab:
-1. Open your terminal in the extracted folder.
-2. Run the following commands:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit from clean source"
-   git branch -M main
-   git remote add origin <YOUR_NEW_REPOSITORY_URL>
-   git push -u origin main
-   ```
-
-### 3. Running the App
-1. Install the dependencies:
-   ```bash
-   npm install
-   ```
-2. Start the development server:
-   ```bash
-   npm run dev
-   ```
-   The app will be available at `http://localhost:9002`.
-
-### 4. Deployment
-This app is optimized for [Firebase App Hosting](https://firebase.google.com/docs/app-hosting). You can connect your new repository to a fresh App Hosting backend in the Firebase Console.
+## Deployment
+Once your code is on GitHub, you can connect it to [Firebase App Hosting](https://firebase.google.com/docs/app-hosting) in the Firebase Console for automatic live deployments.
 
 ---
 *Sekbid 1 Haleluya!*
