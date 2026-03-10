@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,7 +6,6 @@ import { StatsDashboard } from "@/components/StatsDashboard";
 import { MemberCard } from "@/components/MemberCard";
 import { AdminPanel } from "@/components/AdminPanel";
 import { SelectionHistory } from "@/components/SelectionHistory";
-import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus, Sparkles, Loader2, UsersRound, Search, Lightbulb, Copy, CheckCircle2, RotateCcw, HelpCircle, ChevronDown } from "lucide-react";
 import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -43,6 +41,10 @@ export default function Home() {
   const [lastBulkLogId, setLastBulkLogId] = useState<string | null>(null);
   const [skippedSuggestions, setSkippedSuggestions] = useState<string[]>([]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  
+  // Singleton state for undo visibility
+  const [undoingMemberId, setUndoingMemberId] = useState<string | null>(null);
+  
   const { toast } = useToast();
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Home() {
     m.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sorting helper: Frequency first (lowest first), then Recency (oldest first)
+  // Sorting logic: Frequency first (lowest first), then Recency (oldest first - i.e. most recently selected goes to bottom)
   const sortByFrequencyAndRecency = (a: Member, b: Member) => {
     if (a.selectionFrequency !== b.selectionFrequency) {
       return a.selectionFrequency - b.selectionFrequency;
@@ -184,8 +186,8 @@ export default function Home() {
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <SidebarTrigger />
-      <SidebarInset className="!ml-0 !mr-0">
-        <div className="min-h-screen pb-20 pt-10 px-4 md:px-8 w-full">
+      <SidebarInset className="!ml-0 !mr-0 !rounded-none">
+        <div className="min-h-screen pb-20 pt-10 px-4 md:px-12 w-full">
           <main className="w-full flex flex-col items-start">
             <header className="flex flex-col mb-12 w-full items-start text-left">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
@@ -238,6 +240,7 @@ export default function Home() {
                             <p>1. Lihat bagian <strong>Suggested for Today</strong>. Sistem secara otomatis menyarankan anggota dengan jumlah tugas (frequency) paling sedikit. Jika petugas kurang pas, bisa di-klik pada nama petugas untuk mengganti satu persatu.</p>
                             <p>2. Klik tombol <strong>Copy List</strong> untuk menyalin nama petugas dan secara otomatis menambah hitungan tugas mereka.</p>
                             <p>3. Jika ingin memilih secara manual, klik tombol <strong>Select</strong> pada baris nama anggota di kategori INTI, ANGGOTA, atau TERBATAS.</p>
+                            <p>4. Setelah dipilih, anggota akan otomatis pindah ke posisi paling bawah dalam kelompok frekuensinya.</p>
                           </AccordionContent>
                         </AccordionItem>
                         
@@ -245,7 +248,7 @@ export default function Home() {
                           <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Tentang Fitur "Undo"</AccordionTrigger>
                           <AccordionContent className="text-muted-foreground text-sm space-y-2">
                             <p>• <strong>Undo Massal:</strong> Jika salah menekan "Copy List", gunakan tombol Undo yang muncul di atas daftar saran.</p>
-                            <p>• <strong>Undo Manual:</strong> Klik kanan (desktop) atau tekan dan tahan (mobile) pada baris nama anggota untuk memunculkan opsi Undo individu.</p>
+                            <p>• <strong>Undo Manual (Cepat):</strong> Klik kanan (desktop) pada baris nama anggota untuk memunculkan tombol Undo secara instan. Hanya satu tombol undo yang akan muncul di layar dalam satu waktu.</p>
                             <p>• <strong>Penting:</strong> Tombol Undo massal akan hilang otomatis pada hari berikutnya untuk menjaga keamanan data.</p>
                           </AccordionContent>
                         </AccordionItem>
@@ -370,7 +373,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {intiMembers.map((member) => (
                             <MemberCard
@@ -379,6 +382,9 @@ export default function Home() {
                               isLowest={member.selectionFrequency === minInti}
                               onSelect={selectMember}
                               isAdminMode={isAdminMode}
+                              isUndoing={undoingMemberId === member.id}
+                              onUndoRequest={() => setUndoingMemberId(member.id)}
+                              onUndoCancel={() => setUndoingMemberId(null)}
                             />
                           ))}
                         </div>
@@ -401,7 +407,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {anggotaMembers.map((member) => (
                             <MemberCard
@@ -410,6 +416,9 @@ export default function Home() {
                               isLowest={member.selectionFrequency === minAnggota}
                               onSelect={selectMember}
                               isAdminMode={isAdminMode}
+                              isUndoing={undoingMemberId === member.id}
+                              onUndoRequest={() => setUndoingMemberId(member.id)}
+                              onUndoCancel={() => setUndoingMemberId(null)}
                             />
                           ))}
                         </div>
@@ -432,7 +441,7 @@ export default function Home() {
                         {searchTerm ? "No matches found." : "No members in this category."}
                       </p>
                     ) : (
-                      <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-4">
+                      <ScrollArea className="h-auto md:h-[600px] w-full pr-4">
                         <div className="grid gap-3 w-full pb-4">
                           {terbatasMembers.map((member) => (
                             <MemberCard
@@ -441,6 +450,9 @@ export default function Home() {
                               isLowest={member.selectionFrequency === minTerbatas}
                               onSelect={selectMember}
                               isAdminMode={isAdminMode}
+                              isUndoing={undoingMemberId === member.id}
+                              onUndoRequest={() => setUndoingMemberId(member.id)}
+                              onUndoCancel={() => setUndoingMemberId(null)}
                             />
                           ))}
                         </div>

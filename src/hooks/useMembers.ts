@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemoFirebase, useCollection, useFirestore, useDoc, useUser } from '@/firebase';
@@ -91,7 +90,7 @@ export function useMembers() {
     const memberRef = doc(firestore, 'members', id);
     const sRef = doc(firestore, 'app_statistics', 'globalStats');
 
-    // Crucial: Update lastSelectedAt so the sorting logic can push this member to the bottom of the tier
+    // Crucial: Update lastSelectedAt so the sorting logic can push this member to the bottom of the group
     updateDocumentNonBlocking(memberRef, {
       selectionFrequency: increment(1),
       lastSelectedAt: serverTimestamp(),
