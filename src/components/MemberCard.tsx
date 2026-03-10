@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef } from "react";
@@ -83,11 +84,18 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
     }
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (hideSelect) return;
+    e.preventDefault();
+    setShowUndoFrame(true);
+  };
+
   const isTerbatas = member.type === 'TERBATAS';
 
   return (
     <div 
       onClick={onClick}
+      onContextMenu={handleContextMenu}
       onMouseDown={startLongPress}
       onMouseUp={clearLongPress}
       onMouseLeave={clearLongPress}
@@ -129,7 +137,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
         <UserCircle2 className={cn("w-5 h-5", hideSelect && "w-3.5 h-3.5")} />
       </div>
 
-      {/* Column 2: Name (Flexible, no shortening) */}
+      {/* Column 2: Name */}
       <div className="flex items-center gap-1 min-w-0 pr-2">
         <h4 className={cn("font-semibold text-sm leading-tight break-words", !hideSelect && "sm:text-base")}>
           {member.name}
@@ -201,7 +209,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
             )}
           </div>
 
-          {/* Column 4: Frequency & Smaller Select Button (Closer together) */}
+          {/* Column 4: Frequency & Select Button */}
           <div className="flex items-center justify-end gap-2 ml-auto">
             <span className={cn(
               "text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded tabular-nums shrink-0",

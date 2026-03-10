@@ -70,17 +70,13 @@ export default function Home() {
   );
 
   // Sorting helper: Frequency first (lowest first), then Recency (oldest first)
-  // This ensures the person JUST selected moves to the absolute bottom of their frequency group
   const sortByFrequencyAndRecency = (a: Member, b: Member) => {
-    // Primary: Selection Frequency
     if (a.selectionFrequency !== b.selectionFrequency) {
       return a.selectionFrequency - b.selectionFrequency;
     }
     
-    // Secondary: Recency of selection (lastSelectedAt)
-    // We want smaller (older) timestamps first.
     const getMillis = (ts: any) => {
-      if (!ts) return 0; // Never selected = earliest priority
+      if (!ts) return 0;
       if (typeof ts.toMillis === 'function') return ts.toMillis();
       if (ts.seconds) return ts.seconds * 1000;
       return new Date(ts).getTime();
@@ -101,7 +97,6 @@ export default function Home() {
     .filter(m => m.type === 'TERBATAS')
     .sort(sortByFrequencyAndRecency);
 
-  // Suggested members logic (lowest frequency, oldest selected)
   const suggestedInti = intiMembers
     .filter(m => !skippedSuggestions.includes(m.id))
     .slice(0, 2);
@@ -127,7 +122,6 @@ export default function Home() {
       setCopied(true);
       const ids = allSuggested.map(m => m.id);
       
-      // Select all suggested members
       for (const id of ids) {
         await selectMember(id, true);
       }
@@ -190,7 +184,7 @@ export default function Home() {
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <SidebarTrigger />
-      <SidebarInset>
+      <SidebarInset className="!ml-0 !mr-0">
         <div className="min-h-screen pb-20 pt-10 px-4 md:px-8 w-full">
           <main className="w-full flex flex-col items-start">
             <header className="flex flex-col mb-12 w-full items-start text-left">
@@ -222,7 +216,6 @@ export default function Home() {
               </div>
             ) : (
               <div className="w-full">
-                {/* Help Section */}
                 <section id="help" className="mb-8 w-full bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
                   <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                     <CollapsibleTrigger asChild>
@@ -252,7 +245,7 @@ export default function Home() {
                           <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Tentang Fitur "Undo"</AccordionTrigger>
                           <AccordionContent className="text-muted-foreground text-sm space-y-2">
                             <p>• <strong>Undo Massal:</strong> Jika salah menekan "Copy List", gunakan tombol Undo yang muncul di atas daftar saran.</p>
-                            <p>• <strong>Undo Manual:</strong> Tekan dan tahan (long-press) pada baris nama anggota selama 1 detik untuk memunculkan opsi Undo individu.</p>
+                            <p>• <strong>Undo Manual:</strong> Klik kanan (desktop) atau tekan dan tahan (mobile) pada baris nama anggota untuk memunculkan opsi Undo individu.</p>
                             <p>• <strong>Penting:</strong> Tombol Undo massal akan hilang otomatis pada hari berikutnya untuk menjaga keamanan data.</p>
                           </AccordionContent>
                         </AccordionItem>
@@ -268,14 +261,6 @@ export default function Home() {
                               <li>Menghapus anggota atau reset seluruh hitungan tugas.</li>
                               <li>Menghapus riwayat (history) di bagian bawah.</li>
                             </ul>
-                            <div className="pt-2 border-t border-primary/5 mt-2">
-                              <p className="font-semibold text-primary/80">Kategori Anggota:</p>
-                              <ul className="list-disc pl-5 space-y-1">
-                                <li><strong>INTI:</strong> Anggota Inti.</li>
-                                <li><strong>ANGGOTA:</strong> Sekbid 2 sampai 4, dan sebagian sekbid 5.</li>
-                                <li><strong>TERBATAS:</strong> Sekbid 1 dan sekbid 5 yang bertugas di mulmed dan story.</li>
-                              </ul>
-                            </div>
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>
@@ -365,7 +350,6 @@ export default function Home() {
                       className="pl-9 bg-card border-border/50 focus:ring-primary/50"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      autoFocus
                     />
                   </div>
                 </div>
