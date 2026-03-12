@@ -229,7 +229,7 @@ export default function Home() {
                           <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Tentang Fitur "Undo"</AccordionTrigger>
                           <AccordionContent className="text-muted-foreground text-sm space-y-2">
                             <p>• <strong>Undo Massal:</strong> Jika salah menekan "Copy List", gunakan tombol Undo yang muncul di atas daftar saran.</p>
-                            <p>• <strong>Undo Manual:</strong> <strong>Klik kanan</strong> pada baris nama anggota untuk memunculkan opsi Undo individu.</p>
+                            <p>• <strong>Undo Manual:</strong> <strong>Klik kanan</strong> pada baris nama anggota untuk memunculkan opsi Undo individu secara instan.</p>
                             <p>• <strong>Penting:</strong> Tombol Undo massal akan hilang otomatis pada hari berikutnya untuk menjaga keamanan data.</p>
                           </AccordionContent>
                         </AccordionItem>
