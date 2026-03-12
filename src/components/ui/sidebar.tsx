@@ -219,7 +219,6 @@ const Sidebar = React.forwardRef<
           className={cn(
             "duration-300 relative h-svh bg-transparent transition-[width] ease-in-out",
             "group-data-[side=right]:rotate-180",
-            // FIXED: Overlay behavior - the spacer stays at icon width so content isn't pushed
             "w-[--sidebar-width-icon]",
             "group-data-[collapsible=offcanvas]:w-0"
           )}
@@ -227,7 +226,7 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             "duration-300 fixed inset-y-0 z-50 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-in-out md:flex",
-            "group-data-[state=expanded]:shadow-2xl",
+            "group-data-[state=expanded]:shadow-2xl group-data-[state=expanded]:bg-sidebar",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
