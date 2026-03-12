@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Member } from "@/types/member";
@@ -25,18 +25,28 @@ interface MemberCardProps {
   isAdminMode: boolean;
   hideSelect?: boolean;
   onClick?: () => void;
+  activeUndoId?: string | null;
+  setActiveUndoId?: (id: string | null) => void;
 }
 
-export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect = false, onClick }: MemberCardProps) {
+export function MemberCard({ 
+  member, 
+  isLowest, 
+  onSelect, 
+  isAdminMode, 
+  hideSelect = false, 
+  onClick,
+  activeUndoId,
+  setActiveUndoId
+}: MemberCardProps) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState(member.name);
-  const [showUndoFrame, setShowUndoFrame] = useState(false);
   
   const { updateMember, deleteMember, undoSelection } = useMembers();
   const { toast } = useToast();
   
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const showUndoFrame = activeUndoId === member.id;
 
   const handleSelect = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -50,12 +60,12 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
     e.stopPropagation();
     if (member.selectionFrequency <= 0) {
       toast({ variant: "destructive", title: "Cannot Undo", description: "Frequency is already zero." });
-      setShowUndoFrame(false);
+      if (setActiveUndoId) setActiveUndoId(null);
       return;
     }
     await undoSelection(member.id);
     toast({ title: "Selection Undone", description: `One selection removed for ${member.name}.` });
-    setShowUndoFrame(false);
+    if (setActiveUndoId) setActiveUndoId(null);
   };
 
   const handleUpdate = async () => {
@@ -70,17 +80,11 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
     toast({ variant: "destructive", title: "Deleted", description: "Member removed." });
   };
 
-  const startLongPress = () => {
-    if (hideSelect) return;
-    longPressTimer.current = setTimeout(() => {
-      setShowUndoFrame(true);
-    }, 1000);
-  };
-
-  const clearLongPress = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-    }
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (hideSelect || !setActiveUndoId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveUndoId(member.id);
   };
 
   const isTerbatas = member.type === 'TERBATAS';
@@ -88,15 +92,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
   return (
     <div 
       onClick={onClick}
-      onMouseDown={startLongPress}
-      onMouseUp={clearLongPress}
-      onMouseLeave={clearLongPress}
-      onClickCapture={(e) => {
-        if (showUndoFrame) {
-           e.stopPropagation();
-           setShowUndoFrame(false);
-        }
-      }}
+      onContextMenu={handleContextMenu}
       className={cn(
         "member-row-frame group relative",
         isLowest && !isTerbatas && "priority-highlight border-destructive/30",
@@ -112,7 +108,7 @@ export function MemberCard({ member, isLowest, onSelect, isAdminMode, hideSelect
             <span className="text-sm font-bold">Undo for {member.name}?</span>
           </div>
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => { e.stopPropagation(); setShowUndoFrame(false); }}>
+            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => { e.stopPropagation(); if (setActiveUndoId) setActiveUndoId(null); }}>
               <X className="w-4 h-4" />
             </Button>
             <Button size="sm" variant="destructive" className="h-8" onClick={handleUndo}>

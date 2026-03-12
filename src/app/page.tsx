@@ -41,6 +41,7 @@ export default function Home() {
   const [lastBulkLogId, setLastBulkLogId] = useState<string | null>(null);
   const [skippedSuggestions, setSkippedSuggestions] = useState<string[]>([]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [activeUndoId, setActiveUndoId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -63,11 +64,17 @@ export default function Home() {
     }
   }, [user, isUserLoading, auth]);
 
+  // Global click listener to close undo frame
+  useEffect(() => {
+    const handleClick = () => setActiveUndoId(null);
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
+
   const filteredMembers = members.filter(m => 
     m.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sorting helper: Frequency first (lowest first), then Recency (oldest first)
   const sortByFrequencyAndRecency = (a: Member, b: Member) => {
     if (a.selectionFrequency !== b.selectionFrequency) {
       return a.selectionFrequency - b.selectionFrequency;
@@ -160,10 +167,10 @@ export default function Home() {
     <div className="flex min-h-screen bg-background w-full overflow-x-hidden">
       <AppSidebar />
       <SidebarTrigger />
-      <SidebarInset className="w-full">
-        <div className="min-h-screen pb-20 pt-10 px-2 md:px-6 w-full max-w-none">
-          <main className="w-full flex flex-col items-start">
-            <header className="flex flex-col mb-12 w-full items-start text-left">
+      <SidebarInset className="w-full flex flex-col">
+        <div className="flex-1 pb-20 pt-10 px-4 md:px-8 w-full max-w-full">
+          <main className="w-full">
+            <header className="flex flex-col mb-12 w-full">
               <div className="w-full flex flex-col gap-6 md:flex-row md:items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-6 h-6 text-primary animate-pulse-subtle shrink-0" />
@@ -191,9 +198,9 @@ export default function Home() {
                 <p className="text-muted-foreground">Authenticating session...</p>
               </div>
             ) : (
-              <div className="w-full max-w-none">
+              <div className="w-full space-y-12">
                 {/* Help Section */}
-                <section id="help" className="mb-8 w-full bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
+                <section id="help" className="w-full bg-card/10 border border-primary/20 rounded-2xl overflow-hidden scroll-mt-24">
                   <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                     <CollapsibleTrigger asChild>
                       <button className="flex items-center justify-between w-full p-4 hover:bg-primary/5 transition-colors text-left group">
@@ -222,7 +229,7 @@ export default function Home() {
                           <AccordionTrigger className="text-sm font-bold uppercase py-3 hover:text-primary">Tentang Fitur "Undo"</AccordionTrigger>
                           <AccordionContent className="text-muted-foreground text-sm space-y-2">
                             <p>• <strong>Undo Massal:</strong> Jika salah menekan "Copy List", gunakan tombol Undo yang muncul di atas daftar saran.</p>
-                            <p>• <strong>Undo Manual:</strong> Tekan dan tahan (long-press) pada baris nama anggota selama 1 detik untuk memunculkan opsi Undo individu.</p>
+                            <p>• <strong>Undo Manual:</strong> <strong>Klik kanan</strong> pada baris nama anggota untuk memunculkan opsi Undo individu.</p>
                             <p>• <strong>Penting:</strong> Tombol Undo massal akan hilang otomatis pada hari berikutnya untuk menjaga keamanan data.</p>
                           </AccordionContent>
                         </AccordionItem>
@@ -246,7 +253,7 @@ export default function Home() {
                 </section>
 
                 {allSuggested.length > 0 && !searchTerm && (
-                  <section id="suggestions" className="mb-12 w-full animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-4 sm:p-6 rounded-2xl border border-border/50 scroll-mt-24">
+                  <section id="suggestions" className="w-full animate-in fade-in slide-in-from-top-4 duration-700 bg-card/20 p-6 rounded-2xl border border-border/50 scroll-mt-24">
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-2">
                         <Lightbulb className="w-5 h-5 text-yellow-400" />
@@ -287,18 +294,16 @@ export default function Home() {
                   </section>
                 )}
 
-                <div className="mb-12 flex justify-start w-full">
-                  <StatsDashboard members={members} alignment="left" />
-                </div>
+                <StatsDashboard members={members} alignment="left" />
 
-                <div className="w-full flex justify-end mb-8">
+                <div className="flex justify-end w-full">
                   <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input placeholder="Search members..." className="pl-9 bg-card border-border/50 focus:ring-primary/50" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full justify-start items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full">
                   <section className="scroll-mt-20 flex flex-col items-start w-full" id="inti">
                     <div className="flex items-center justify-between mb-6 border-b border-border pb-2 w-full">
                       <h2 className="text-xl sm:text-2xl font-bold text-primary flex items-center gap-2 uppercase tracking-wide">
@@ -309,10 +314,18 @@ export default function Home() {
                         {intiMembers.length}
                       </span>
                     </div>
-                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-2">
+                    <ScrollArea className="h-[600px] w-full pr-2">
                       <div className="grid gap-3 w-full pb-4">
                         {intiMembers.map((member) => (
-                          <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minInti} onSelect={selectMember} isAdminMode={isAdminMode} />
+                          <MemberCard 
+                            key={member.id} 
+                            member={member} 
+                            isLowest={member.selectionFrequency === minInti} 
+                            onSelect={selectMember} 
+                            isAdminMode={isAdminMode} 
+                            activeUndoId={activeUndoId}
+                            setActiveUndoId={setActiveUndoId}
+                          />
                         ))}
                       </div>
                     </ScrollArea>
@@ -328,10 +341,18 @@ export default function Home() {
                         {anggotaMembers.length}
                       </span>
                     </div>
-                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-2">
+                    <ScrollArea className="h-[600px] w-full pr-2">
                       <div className="grid gap-3 w-full pb-4">
                         {anggotaMembers.map((member) => (
-                          <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minAnggota} onSelect={selectMember} isAdminMode={isAdminMode} />
+                          <MemberCard 
+                            key={member.id} 
+                            member={member} 
+                            isLowest={member.selectionFrequency === minAnggota} 
+                            onSelect={selectMember} 
+                            isAdminMode={isAdminMode} 
+                            activeUndoId={activeUndoId}
+                            setActiveUndoId={setActiveUndoId}
+                          />
                         ))}
                       </div>
                     </ScrollArea>
@@ -347,10 +368,18 @@ export default function Home() {
                         {terbatasMembers.length}
                       </span>
                     </div>
-                    <ScrollArea className="h-auto md:h-[600px] lg:portrait:h-auto w-full pr-2">
+                    <ScrollArea className="h-[600px] w-full pr-2">
                       <div className="grid gap-3 w-full pb-4">
                         {terbatasMembers.map((member) => (
-                          <MemberCard key={member.id} member={member} isLowest={member.selectionFrequency === minTerbatas} onSelect={selectMember} isAdminMode={isAdminMode} />
+                          <MemberCard 
+                            key={member.id} 
+                            member={member} 
+                            isLowest={member.selectionFrequency === minTerbatas} 
+                            onSelect={selectMember} 
+                            isAdminMode={isAdminMode} 
+                            activeUndoId={activeUndoId}
+                            setActiveUndoId={setActiveUndoId}
+                          />
                         ))}
                       </div>
                     </ScrollArea>
